@@ -1,9 +1,12 @@
 import { login } from "../api/authApi";
 import { useContext } from "react";
 import { AuthContext } from "../auth/AuthContext";
-
+import { useNavigate } from "react-router-dom";
 const Login = () => {
+  
   const { loginUser } = useContext(AuthContext);
+  const navigate=useNavigate()
+
 
  const handleSubmit = async (e) => {
   e.preventDefault();
@@ -14,6 +17,7 @@ const Login = () => {
   });
 
   loginUser(); // ✅ no token
+  alert("login successful")
 };
 
 
@@ -22,6 +26,7 @@ const Login = () => {
       <input name="username" />
       <input name="password" type="password" />
       <button>Login</button>
+      <button onClick={()=>navigate("/")}>Home</button>
     </form>
   );
 };

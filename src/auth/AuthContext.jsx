@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 MUST be inside component
+  //  MUST be inside component
   useEffect(() => {
   const checkAuth = async () => {
     try {
