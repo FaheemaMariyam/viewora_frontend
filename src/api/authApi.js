@@ -11,3 +11,9 @@ export const getProfile = () =>
 
 export const logout = () =>
   axiosInstance.post("/api/auth/logout/");
+
+export const sendPhoneOtp = (phone_number) =>
+  axiosInstance.post("/api/auth/otp/send/", { phone_number });
+
+export const verifyPhoneOtp = (phone_number, otp) =>
+  axiosInstance.post("/api/auth/otp/verify/", { phone_number, otp });

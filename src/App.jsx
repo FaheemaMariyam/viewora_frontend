@@ -34,7 +34,13 @@
 
 // export default App
 import Router from "./router";
+import Navbar from "./components/Navbar";
 
-const App = () => <Router />;
-
-export default App;
+export default function App() {
+  return (
+    <>
+      <Navbar />
+      <Router />
+    </>
+  );
+}
