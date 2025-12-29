@@ -136,7 +136,7 @@
 //     </nav>
 //   );
 // }
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../auth/AuthContext";
 import { logout } from "../api/authApi";
@@ -145,6 +145,7 @@ export default function Navbar() {
   const { user, loading, logoutUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const [open, setOpen] = useState(false);
 
   if (loading) return null;
 
@@ -152,6 +153,7 @@ export default function Navbar() {
     await logout();
     logoutUser();
     navigate("/");
+    setOpen(false);
   };
 
   const isActive = (path) =>
@@ -167,7 +169,7 @@ export default function Navbar() {
         shadow-[0_2px_12px_rgba(0,0,0,0.35)]
         "
       >
-        <div className="max-w-7xl mx-auto px-8 py-3 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-3 flex justify-between items-center">
 
           {/* Brand */}
           <div
@@ -180,21 +182,20 @@ export default function Navbar() {
               bg-gradient-to-br from-indigo-600 to-indigo-900
               text-white flex items-center justify-center
               font-semibold text-sm
-              shadow-md group-hover:shadow-lg transition
+              shadow-md
               "
             >
               V
             </div>
 
-            <span className="text-xl font-semibold tracking-tight text-white/90 group-hover:text-white transition">
+            <span className="text-xl font-semibold tracking-tight text-white/90">
               Viewora
             </span>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center space-x-6 text-sm font-medium">
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center space-x-6 text-sm font-medium">
 
-            {/* ❌ NOT LOGGED IN */}
             {!user && (
               <>
                 <button
@@ -209,7 +210,7 @@ export default function Navbar() {
                   className="
                   px-4 py-1.5 rounded-full
                   bg-gradient-to-r from-indigo-600 to-indigo-800
-                  text-white font-semibold text-sm
+                  text-white font-semibold
                   hover:from-indigo-500 hover:to-indigo-900
                   transition shadow-md
                   "
@@ -219,45 +220,37 @@ export default function Navbar() {
               </>
             )}
 
-            {/* ✅ LOGGED IN */}
             {user && (
               <>
                 <button
                   onClick={() => navigate("/properties")}
-                  className={`transition ${
+                  className={
                     isActive("/properties")
                       ? "text-white"
                       : "text-white/70 hover:text-white"
-                  }`}
+                  }
                 >
                   Properties
                 </button>
 
-                <div
-                  className="
-                  px-3 py-1 rounded-full
-                  bg-white/10 text-white/90
-                  capitalize text-xs tracking-wide
-                  border border-white/10
-                  "
-                >
+                <div className="px-3 py-1 rounded-full bg-white/10 text-white/90 capitalize text-xs">
                   {user.role}
                 </div>
 
                 <button
                   onClick={() => navigate("/profile")}
-                  className={`transition ${
+                  className={
                     isActive("/profile")
                       ? "text-white"
                       : "text-white/70 hover:text-white"
-                  }`}
+                  }
                 >
                   Profile
                 </button>
 
                 <button
                   onClick={handleLogout}
-                  className="text-red-300 hover:text-red-400 transition"
+                  className="text-red-300 hover:text-red-400"
                 >
                   Logout
                 </button>
@@ -265,7 +258,75 @@ export default function Navbar() {
             )}
           </div>
 
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setOpen(!open)}
+            className="md:hidden text-white text-2xl"
+          >
+            ☰
+          </button>
         </div>
+
+        {/* Mobile Menu */}
+        {open && (
+          <div className="md:hidden px-4 pb-4 space-y-3 text-sm">
+
+            {!user && (
+              <>
+                <button
+                  onClick={() => {
+                    navigate("/login");
+                    setOpen(false);
+                  }}
+                  className="block text-white/80"
+                >
+                  Login
+                </button>
+
+                <button
+                  onClick={() => {
+                    navigate("/signup");
+                    setOpen(false);
+                  }}
+                  className="block text-indigo-400"
+                >
+                  Sign Up
+                </button>
+              </>
+            )}
+
+            {user && (
+              <>
+                <button
+                  onClick={() => {
+                    navigate("/properties");
+                    setOpen(false);
+                  }}
+                  className="block text-white/80"
+                >
+                  Properties
+                </button>
+
+                <button
+                  onClick={() => {
+                    navigate("/profile");
+                    setOpen(false);
+                  }}
+                  className="block text-white/80"
+                >
+                  Profile
+                </button>
+
+                <button
+                  onClick={handleLogout}
+                  className="block text-red-400"
+                >
+                  Logout
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </nav>
   );

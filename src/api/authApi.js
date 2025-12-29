@@ -17,3 +17,11 @@ export const sendPhoneOtp = (phone_number) =>
 
 export const verifyPhoneOtp = (phone_number, otp) =>
   axiosInstance.post("/api/auth/otp/verify/", { phone_number, otp });
+// export const requestPasswordReset = (email) =>
+//   axiosInstance.post("/api/auth/reset-password/request/", { email });
+export const resetPasswordRequest = (data) =>
+  axiosInstance.post("/api/auth/reset-password/request/", data);
+export const confirmPasswordReset = (data) =>
+  axiosInstance.post("/api/auth/reset-password/confirm/", data);
+export const changePassword = (data) =>
+  axiosInstance.post("/api/auth/change-password/", data);

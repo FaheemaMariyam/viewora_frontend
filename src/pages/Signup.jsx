@@ -427,7 +427,7 @@ export default function Signup() {
                 onClick={() => navigate("/login")}
                 className="text-indigo-700 font-medium cursor-pointer hover:underline"
               >
-                Sign in
+                login
               </span>
             </p>
 
