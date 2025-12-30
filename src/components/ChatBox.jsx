@@ -239,12 +239,19 @@ export default function ChatBox({ interestId }) {
   useEffect(() => {
     if (!interestId || !user) return;
 
-    const protocol =
-      window.location.protocol === "https:" ? "wss" : "ws";
+//  const protocol =
+//   window.location.protocol === "https:" ? "wss" : "ws";
 
-    const socket = new WebSocket(
-      `${protocol}://localhost:8000/ws/chat/interest/${interestId}/`
-    );
+// const socket = new WebSocket(
+//   `${protocol}://${window.location.host}/ws/chat/interest/${interestId}/`
+// );
+const protocol =
+  window.location.protocol === "https:" ? "wss" : "ws";
+
+const socket = new WebSocket(
+  `${protocol}://${window.location.hostname}:8000/ws/chat/interest/${interestId}/`
+);
+
 
     socketRef.current = socket;
 

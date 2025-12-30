@@ -1,17 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getProfile } from "../api/authApi";
 
-// ✅ export context
 export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const accessToken = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("access="))
-    ?.split("=")[1];
 
   useEffect(() => {
     const loadUser = async () => {
@@ -24,12 +18,17 @@ export function AuthProvider({ children }) {
         setLoading(false);
       }
     };
+
     loadUser();
   }, []);
 
   const loginUser = async () => {
-    const res = await getProfile();
-    setUser(res.data);
+    try {
+      const res = await getProfile();
+      setUser(res.data);
+    } catch {
+      setUser(null);
+    }
   };
 
   const logoutUser = () => setUser(null);
@@ -40,7 +39,6 @@ export function AuthProvider({ children }) {
         user,
         loading,
         isAuthenticated: !!user,
-        accessToken,
         loginUser,
         logoutUser,
       }}
