@@ -6,3 +6,9 @@ export const getChatHistory = (interestId) =>
   );
 export const markMessagesRead = (interestId) =>
   axiosInstance.post(`/api/chat/interest/${interestId}/read/`);
+
+export const getClientChats = () =>
+  axiosInstance.get("/api/interests/client/interests/");
+
+export const getBrokerChats = () =>
+  axiosInstance.get("/api/interests/broker/interests/");

@@ -63,6 +63,9 @@ import PropertyDetail from "./pages/properties/PropertyDetails";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import ChangePassword from "./pages/auth/ChangePassword";
+import BrokerDashboard from "./pages/broker/BrokerDashboard";
+import RoleBasedRoute from "./auth/RoleBasedRoute";
+import Chats from "./pages/chat/Chats";
 
 const Router = () => (
   <Routes>
@@ -95,6 +98,23 @@ const Router = () => (
     <Route path="/pending-approval" element={<PendingApproval />} />
     <Route path="/properties" element={<PropertyList />} />
     <Route path="/properties/:id" element={<PropertyDetail />} />
+  <Route
+  path="/broker"
+  element={
+    <RoleBasedRoute role="broker">
+      <BrokerDashboard />
+    </RoleBasedRoute>
+  }
+/>
+<Route
+  path="/chats"
+  element={
+    <ProtectedRoute>
+      <Chats />
+    </ProtectedRoute>
+  }
+/>
+
   </Routes>
 );
 

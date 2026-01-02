@@ -15,10 +15,17 @@
 import { useContext } from "react";
 import { AuthContext } from "../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function Profile() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  useEffect(() => {
+  if (user?.role === "broker") {
+    navigate("/broker");
+  }
+}, [user]);
+
 
   if (!user) return null;
 
