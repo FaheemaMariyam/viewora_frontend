@@ -1,56 +1,4 @@
-// import { Routes, Route, Navigate } from "react-router-dom";
-// import Login from "./pages/Login";
-// import Signup from "./pages/Signup";
-// import Profile from "./pages/Profile";
-// import Home from "./pages/home";
-// import ProtectedRoute from "./auth/ProtectedRoute";
-// import PendingApproval from "./pages/pendingApproval";
-// import PropertyList from "./pages/properties/PropertyList";
-// import PropertyDetail from "./pages/properties/PropertyDetails";
-// import ChangePassword from "./pages/auth/ChangePassword";
-// import ResetPassword from "./pages/auth/ResetPassword";
 
-// const Router = () => (
-//   <Routes>
-//     {/* Default route */}
-//     {/* <Route path="/" element={<Navigate to="/login" replace />} /> */}
-//     <Route path="/" element={<Home/>}/>
-
-//     <Route path="/login" element={<Login />} />
-//     <Route path="/signup" element={<Signup />} />
-
-//     <Route
-//       path="/profile"
-//       element={
-//         <ProtectedRoute>
-//           <Profile />
-//         </ProtectedRoute>
-//       }
-//     />
-//     <Route path="/pending-approval" element={<PendingApproval />} />
-//       <Route path="/properties" element={<PropertyList />} />
-//       <Route
-//   path="/properties/:id"
-//   element={<PropertyDetail />}
-// />
-// {/* <Route path="/forgot-password" element={<ForgotPassword />} />
-// <Route path="/change-password" element={<ResetPassword />} /> */}
-// <Route path="/forgot-password" element={<ForgotPassword />} />
-// <Route path="/reset-password" element={<ResetPassword />} />
-
-// <Route
-//   path="/change-password"
-//   element={
-//     <ProtectedRoute>
-//       <ChangePassword />
-//     </ProtectedRoute>
-//   }
-// />
-
-//   </Routes>
-// );
-
-// export default Router;
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -66,6 +14,8 @@ import ChangePassword from "./pages/auth/ChangePassword";
 import BrokerDashboard from "./pages/broker/BrokerDashboard";
 import RoleBasedRoute from "./auth/RoleBasedRoute";
 import Chats from "./pages/chat/Chats";
+import SellerDashboard from "./pages/seller/SellerDashboard";
+import AddProperty from "./pages/seller/AddProperty";
 
 const Router = () => (
   <Routes>
@@ -114,7 +64,22 @@ const Router = () => (
     </ProtectedRoute>
   }
 />
-
+<Route
+  path="/seller"
+  element={
+    <RoleBasedRoute role="seller">
+      <SellerDashboard />
+    </RoleBasedRoute>
+  }
+/>
+<Route
+  path="/seller/add-property"
+  element={
+    <RoleBasedRoute role="seller">
+      <AddProperty />
+    </RoleBasedRoute>
+  }
+/>
   </Routes>
 );
 

@@ -1,12 +1,4 @@
-// export default function PendingApproval() {
-//   return (
-//     <div>
-//       <h2>Signup Successful</h2>
-//       <p>Your account is under admin review.</p>
-//       <p>Please complete your profile and wait for approval.</p>
-//     </div>
-//   );
-// }
+
 export default function PendingApproval() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

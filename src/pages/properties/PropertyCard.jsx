@@ -1,39 +1,4 @@
-// export default function PropertyCard({ property, onView }) {
-//   return (
-//     <div className="bg-white rounded-xl shadow-sm p-5 border">
-//       <h2 className="font-semibold text-gray-800">
-//         {property.title}
-//       </h2>
 
-//       <p className="text-sm text-gray-500 mt-1">
-//         {property.locality}, {property.city}
-//       </p>
-
-//       <p className="text-blue-600 font-bold mt-2">
-//         ₹{Number(property.price).toLocaleString()}
-//       </p>
-
-//       <div className="flex gap-4 text-xs text-gray-500 mt-3">
-//         <span>👁 {property.view_count}</span>
-//         <span>❤️ {property.interest_count}</span>
-//         <span className="capitalize">🏠 {property.property_type}</span>
-//       </div>
-
-//       <button
-//         onClick={onView}
-//         className="mt-4 w-full py-2 rounded-md bg-slate-900 text-white text-sm hover:bg-slate-800"
-//       >
-//         View Details
-//       </button>
-
-//       {property.is_interested && (
-//         <p className="mt-2 text-xs text-green-600 text-center">
-//           Interested
-//         </p>
-//       )}
-//     </div>
-//   );
-// }
 export default function PropertyCard({ property, onView }) {
   return (
     <div

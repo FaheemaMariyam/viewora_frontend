@@ -1,17 +1,4 @@
-// import { useEffect, useState } from "react";
-// import { getProfile } from "../api/authApi";
 
-// const Profile = () => {
-//   const [profile, setProfile] = useState(null);
-
-//   useEffect(() => {
-//     getProfile().then((res) => setProfile(res.data));
-//   }, []);
-
-//   return <pre>{JSON.stringify(profile, null, 2)}</pre>;
-// };
-
-// export default Profile;
 import { useContext } from "react";
 import { AuthContext } from "../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -20,11 +7,22 @@ import { useEffect } from "react";
 export default function Profile() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  useEffect(() => {
-  if (user?.role === "broker") {
+//   useEffect(() => {
+//   if (user?.role === "broker") {
+//     navigate("/broker");
+//     if (user?.role === "seller") navigate("/seller");
+//   }
+  
+// }, [user]);
+useEffect(() => {
+  if (!user) return;
+
+  if (user.role === "broker") {
     navigate("/broker");
+  } else if (user.role === "seller") {
+    navigate("/seller");
   }
-}, [user]);
+}, [user, navigate]);
 
 
   if (!user) return null;
