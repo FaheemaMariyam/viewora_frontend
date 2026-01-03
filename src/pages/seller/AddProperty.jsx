@@ -1,29 +1,157 @@
+
+// import { useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { createProperty } from "../../api/sellerApi";
+
+// export default function AddProperty() {
+//   const navigate = useNavigate();
+
+//   const [form, setForm] = useState({
+//     title: "",
+//     description: "",
+//     property_type: "house",
+//     price: "",
+//     price_negotiable: true,
+//     area_size: "",
+//     area_unit: "sqft",
+//     city: "",
+//     locality: "",
+//     address: "",
+//     bedrooms: "",
+//     bathrooms: "",
+//     parking_available: false,
+//     furnishing_status: "",
+//     facing: "",
+//     property_age_years: "",
+//     ownership_count: 1,
+//     reason_for_selling: "",
+//   });
+
+//   const [images, setImages] = useState([]);
+//   const [loading, setLoading] = useState(false);
+
+//   const handleChange = (e) => {
+//     const { name, value, type, checked } = e.target;
+//     setForm((prev) => ({
+//       ...prev,
+//       [name]: type === "checkbox" ? checked : value,
+//     }));
+//   };
+
+//   const handleImageChange = (e) => {
+//     setImages(Array.from(e.target.files));
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+
+//     const formData = new FormData();
+//     Object.entries(form).forEach(([key, value]) =>
+//       formData.append(key, value)
+//     );
+
+//     images.forEach((img) => formData.append("images", img));
+
+//     try {
+//       await createProperty(formData);
+//       navigate("/seller");
+//     } catch {
+//       alert("Failed to create property");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="min-h-screen p-6 bg-slate-100">
+//       <h1 className="text-xl font-semibold mb-4">Add Property</h1>
+
+//       <form onSubmit={handleSubmit} className="space-y-4">
+//         <input name="title" placeholder="Title" onChange={handleChange} />
+//         <textarea name="description" placeholder="Description" onChange={handleChange} />
+
+//         <select name="property_type" onChange={handleChange}>
+//           <option value="house">House</option>
+//           <option value="flat">Flat</option>
+//           <option value="plot">Plot</option>
+//           <option value="commercial">Commercial</option>
+//         </select>
+
+//         <input type="number" name="price" placeholder="Price" onChange={handleChange} />
+//         <input name="area_size" placeholder="Area Size" onChange={handleChange} />
+//         <input name="city" placeholder="City" onChange={handleChange} />
+//         <input name="locality" placeholder="Locality" onChange={handleChange} />
+//         <textarea name="address" placeholder="Full Address" onChange={handleChange} />
+
+//         <input type="file" multiple accept="image/*" onChange={handleImageChange} />
+
+//         <button
+//           disabled={loading}
+//           className="bg-indigo-600 text-white px-4 py-2 rounded"
+//         >
+//           {loading ? "Creating..." : "Create Property"}
+//         </button>
+//       </form>
+//     </div>
+//   );
+// }
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createProperty } from "../../api/sellerApi";
 
 export default function AddProperty() {
   const navigate = useNavigate();
+
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    property_type: "house",
+    price: "",
+    price_negotiable: true,
+    area_size: "",
+    area_unit: "sqft",
+    city: "",
+    locality: "",
+    address: "",
+    bedrooms: "",
+    bathrooms: "",
+    parking_available: false,
+    furnishing_status: "",
+    facing: "",
+    property_age_years: "",
+    ownership_count: 1,
+    reason_for_selling: "",
+  });
+
+  const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const submit = async (e) => {
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleImageChange = (e) => {
+    setImages(Array.from(e.target.files));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const form = e.target;
+    const formData = new FormData();
+    Object.entries(form).forEach(([key, value]) =>
+      formData.append(key, value)
+    );
 
-    const data = {
-      title: form.title.value,
-      description: form.description.value,
-      price: form.price.value,
-      city: form.city.value,
-      locality: form.locality.value,
-      property_type: form.property_type.value,
-      area_size: form.area_size.value,
-    };
+    images.forEach((img) => formData.append("images", img));
 
     try {
-      await createProperty(data);
+      await createProperty(formData);
       navigate("/seller");
     } catch {
       alert("Failed to create property");
@@ -33,40 +161,171 @@ export default function AddProperty() {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-slate-100">
-      <h1 className="text-xl font-semibold mb-6">
-        Add New Property
-      </h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-12 px-6">
+      <div className="max-w-5xl mx-auto">
 
-      <form
-        onSubmit={submit}
-        className="bg-white p-6 rounded-xl shadow max-w-lg space-y-4"
-      >
-        <input name="title" placeholder="Title" required />
-        <input name="city" placeholder="City" required />
-        <input name="locality" placeholder="Locality" required />
-        <input name="price" type="number" placeholder="Price" required />
-        <input name="area_size" type="number" placeholder="Area size" required />
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold text-white tracking-tight">
+            Add New Property
+          </h1>
+          <p className="text-slate-400 mt-2">
+            Provide accurate details to attract genuine buyers
+          </p>
+        </div>
 
-        <select name="property_type">
-          <option value="house">House</option>
-          <option value="flat">Flat</option>
-          <option value="plot">Plot</option>
-        </select>
+        {/* Card */}
+        <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
 
-        <textarea
-          name="description"
-          placeholder="Description"
-          rows="4"
-        />
+            {/* Basic Info */}
+            <div>
+              <h2 className="text-lg font-semibold text-slate-800 mb-4">
+                Property Information
+              </h2>
 
-        <button
-          disabled={loading}
-          className="w-full py-2 bg-indigo-600 text-white rounded"
-        >
-          {loading ? "Saving..." : "Create Property"}
-        </button>
-      </form>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="label">Title</label>
+                  <input
+                    name="title"
+                    placeholder="Luxury 3BHK Villa"
+                    onChange={handleChange}
+                    className="input"
+                  />
+                </div>
+
+                <div>
+                  <label className="label">Property Type</label>
+                  <select
+                    name="property_type"
+                    onChange={handleChange}
+                    className="input"
+                  >
+                    <option value="house">House</option>
+                    <option value="flat">Flat</option>
+                    <option value="plot">Plot</option>
+                    <option value="commercial">Commercial</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="label">Price</label>
+                  <input
+                    type="number"
+                    name="price"
+                    placeholder="₹ 85,00,000"
+                    onChange={handleChange}
+                    className="input"
+                  />
+                </div>
+
+                <div>
+                  <label className="label">Area Size</label>
+                  <input
+                    name="area_size"
+                    placeholder="1800 sqft"
+                    onChange={handleChange}
+                    className="input"
+                  />
+                </div>
+
+                <div>
+                  <label className="label">City</label>
+                  <input
+                    name="city"
+                    placeholder="Bangalore"
+                    onChange={handleChange}
+                    className="input"
+                  />
+                </div>
+
+                <div>
+                  <label className="label">Locality</label>
+                  <input
+                    name="locality"
+                    placeholder="Whitefield"
+                    onChange={handleChange}
+                    className="input"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="label">Description</label>
+              <textarea
+                name="description"
+                rows="4"
+                placeholder="Describe the property highlights, amenities, and surroundings..."
+                onChange={handleChange}
+                className="input resize-none"
+              />
+            </div>
+
+            {/* Address */}
+            <div>
+              <label className="label">Full Address</label>
+              <textarea
+                name="address"
+                rows="3"
+                placeholder="Enter complete address"
+                onChange={handleChange}
+                className="input resize-none"
+              />
+            </div>
+
+            {/* Images */}
+            <div>
+              <label className="label">Property Images</label>
+              <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-indigo-500 transition">
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="w-full cursor-pointer"
+                />
+                <p className="text-sm text-slate-500 mt-2">
+                  Upload high-quality images (multiple allowed)
+                </p>
+              </div>
+            </div>
+
+            {/* Submit */}
+            <div className="pt-6 flex justify-end">
+              <button
+                disabled={loading}
+                className="
+                  bg-gradient-to-r from-indigo-600 to-purple-600
+                  hover:from-indigo-700 hover:to-purple-700
+                  text-white font-semibold px-8 py-3 rounded-xl
+                  shadow-lg disabled:opacity-60 disabled:cursor-not-allowed
+                  transition-all
+                "
+              >
+                {loading ? "Creating Property..." : "Create Property"}
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+      {/* Tailwind helpers */}
+      <style>
+        {`
+          .label {
+            @apply block text-sm font-medium text-slate-700 mb-1;
+          }
+          .input {
+            @apply w-full rounded-lg border border-slate-300 px-4 py-2
+            focus:outline-none focus:ring-2 focus:ring-indigo-500
+            focus:border-indigo-500 bg-white;
+          }
+        `}
+      </style>
     </div>
   );
 }

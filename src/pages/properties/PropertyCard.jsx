@@ -1,78 +1,161 @@
 
+// export default function PropertyCard({ property, onView }) {
+//   return (
+//     <div
+//       className="
+//       bg-gradient-to-b from-white/90 to-white/80
+//       backdrop-blur-xl
+//       border border-white/30
+//       rounded-2xl
+//       shadow-[0_12px_35px_rgba(0,0,0,0.15)]
+//       hover:shadow-[0_20px_50px_rgba(0,0,0,0.25)]
+//       transition
+//       overflow-hidden
+//       flex flex-col
+//       "
+//     >
+//       {/* IMAGE */}
+//       <div className="h-44 bg-gray-200">
+//         {property.cover_image ? (
+//           <img
+//             src={property.cover_image}
+//             alt={property.title}
+//             className="w-full h-full object-cover"
+//           />
+//         ) : (
+//           <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+//             No Image
+//           </div>
+//         )}
+//       </div>
+
+//       {/* CONTENT */}
+//       <div className="p-5 flex flex-col flex-grow">
+//         <h2 className="font-semibold text-gray-900 text-lg truncate">
+//           {property.title}
+//         </h2>
+
+//         <p className="text-sm text-gray-500 mt-1">
+//           {property.locality}, {property.city}
+//         </p>
+
+//         <p className="text-2xl font-bold text-indigo-700 mt-3">
+//           ₹{Number(property.price).toLocaleString()}
+//         </p>
+
+//         <div className="flex justify-between text-xs text-gray-500 mt-4">
+//           <span>👁 {property.view_count}</span>
+//           <span>❤️ {property.interest_count}</span>
+//           <span className="capitalize">🏠 {property.property_type}</span>
+//         </div>
+
+//         <button
+//           onClick={onView}
+//           className="
+//           mt-auto pt-4
+//           w-full py-2.5 rounded-lg
+//           bg-gradient-to-r from-indigo-700 to-slate-900
+//           text-white text-sm font-semibold
+//           hover:from-indigo-800 hover:to-black
+//           transition shadow-md
+//           "
+//         >
+//           View Details
+//         </button>
+
+//         {property.is_interested && (
+//           <div className="mt-3 text-center">
+//             <span className="inline-block px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-medium border border-green-200">
+//               ✓ Interested
+//             </span>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
 export default function PropertyCard({ property, onView }) {
+  const imageUrl = property.cover_image;
+
   return (
     <div
       className="
-      bg-gradient-to-b from-white/90 to-white/80
-      backdrop-blur-xl
-      border border-white/30
-      rounded-2xl
-      shadow-[0_12px_35px_rgba(0,0,0,0.15)]
-      hover:shadow-[0_20px_50px_rgba(0,0,0,0.25)]
-      transition
-      p-5
-      flex flex-col
+        group relative rounded-2xl overflow-hidden
+        bg-white/95 backdrop-blur-xl
+        border border-slate-200
+        shadow-sm hover:shadow-2xl hover:-translate-y-1
+        transition-all duration-300
+        flex flex-col
       "
     >
-      {/* Title */}
-      <h2 className="font-semibold text-gray-900 text-lg truncate">
-        {property.title}
-      </h2>
-
-      {/* Location */}
-      <p className="text-sm text-gray-500 mt-1">
-        {property.locality}, {property.city}
-      </p>
-
-      {/* Price */}
-      <p className="text-2xl font-bold text-indigo-700 mt-3">
-        ₹{Number(property.price).toLocaleString()}
-      </p>
-
-      {/* Stats */}
-      <div className="flex justify-between text-xs text-gray-500 mt-4">
-        <span className="flex items-center gap-1">
-          👁 <span>{property.view_count}</span>
-        </span>
-
-        <span className="flex items-center gap-1">
-          ❤️ <span>{property.interest_count}</span>
-        </span>
-
-        <span className="flex items-center gap-1 capitalize">
-          🏠 <span>{property.property_type}</span>
-        </span>
-      </div>
-
-      {/* CTA */}
-      <button
-        onClick={onView}
-        className="
-        mt-5 w-full py-2.5 rounded-lg
-        bg-gradient-to-r from-indigo-700 to-slate-900
-        text-white text-sm font-semibold
-        hover:from-indigo-800 hover:to-black
-        transition shadow-md
-        "
-      >
-        View Details
-      </button>
-
-      {/* Interested badge */}
-      {property.is_interested && (
-        <div className="mt-3 text-center">
-          <span
+      {/* IMAGE */}
+      {imageUrl && (
+        <div className="relative h-52 overflow-hidden">
+          <img
+            src={imageUrl}
+            alt={property.title}
             className="
-            inline-block px-3 py-1 rounded-full
-            bg-green-50 text-green-700
-            text-xs font-medium
-            border border-green-200
+              h-full w-full object-cover
+              group-hover:scale-105 transition-transform duration-500
             "
-          >
-            ✓ Interested
+          />
+
+          <span className="absolute top-3 left-3 px-3 py-1 text-xs rounded-full bg-slate-900/80 text-white">
+            {property.property_type}
           </span>
         </div>
       )}
+
+      {/* CONTENT */}
+      <div className="p-5 flex flex-col flex-grow space-y-2">
+        <h3 className="text-lg font-semibold text-slate-800 truncate">
+          {property.title}
+        </h3>
+
+        <p className="text-sm text-slate-500">
+          {property.locality}, {property.city}
+        </p>
+
+        <p className="text-xl font-bold text-indigo-700">
+          ₹ {Number(property.price).toLocaleString()}
+        </p>
+
+        <div className="flex flex-wrap gap-3 text-xs text-slate-500 mt-2">
+          {property.bedrooms != null && <span>🛏 {property.bedrooms}</span>}
+          {property.bathrooms != null && <span>🛁 {property.bathrooms}</span>}
+          <span>
+            📐 {property.area_size} {property.area_unit}
+          </span>
+        </div>
+
+        <div className="flex justify-between text-xs text-slate-500 mt-3">
+          <span>👁 {property.view_count}</span>
+          <span>❤️ {property.interest_count}</span>
+        </div>
+
+        <button
+          onClick={onView}
+          className="
+            mt-auto pt-4
+            w-full py-2.5 rounded-lg
+            bg-gradient-to-r from-indigo-700 to-slate-900
+            text-white text-sm font-semibold
+            hover:from-indigo-800 hover:to-black
+            transition shadow-md
+          "
+        >
+          View Details
+        </button>
+
+        {/* INTERESTED BADGE */}
+        {property.is_interested && (
+          <div className="mt-3 text-center">
+            <span className="inline-block px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-medium border">
+              ✓ Interested
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

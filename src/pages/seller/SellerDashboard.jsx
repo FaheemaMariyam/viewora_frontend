@@ -4,8 +4,8 @@
 // import {
 //   getMyProperties,
 //   toggleArchiveProperty,
-//   createProperty
 // } from "../../api/sellerApi";
+// import SellerPropertyCard from "./SellerPropertycard";
 
 // export default function SellerDashboard() {
 //   const navigate = useNavigate();
@@ -21,7 +21,7 @@
 //       const res = await getMyProperties();
 //       setProperties(res.data);
 //     } catch (err) {
-//       console.error("Failed to load properties", err);
+//       console.error(err);
 //     } finally {
 //       setLoading(false);
 //     }
@@ -43,7 +43,7 @@
 //         )
 //       );
 //     } catch {
-//       alert("Failed to update property status");
+//       alert("Failed to update status");
 //     }
 //   };
 
@@ -64,55 +64,24 @@
 
 //         <button
 //           onClick={() => navigate("/seller/add-property")}
-//           className="px-4 py-2 rounded-lg
-//           bg-indigo-600 text-white
-//           hover:bg-indigo-700"
+//           className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
 //         >
 //           + Add Property
 //         </button>
 //       </div>
 
 //       {properties.length === 0 ? (
-//         <div className="text-gray-500">
+//         <p className="text-gray-500">
 //           No properties posted yet.
-//         </div>
+//         </p>
 //       ) : (
 //         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-//           {properties.map((p) => (
-//             <div
-//               key={p.id}
-//               className={`bg-white p-5 rounded-xl shadow
-//               ${!p.is_active && "opacity-70 border border-dashed"}`}
-//             >
-//               <h3 className="font-semibold text-lg">
-//                 {p.title}
-//               </h3>
-
-//               <p className="text-sm text-gray-500 mt-1">
-//                 {p.city} • {p.locality}
-//               </p>
-
-//               <p className="mt-2 font-medium">
-//                 ₹ {p.price}
-//               </p>
-
-//               <div className="flex justify-between items-center mt-4">
-//                 <span className="text-xs text-gray-600 capitalize">
-//                   Status: {p.status}
-//                 </span>
-
-//                 <button
-//                   onClick={() => handleToggleArchive(p.id)}
-//                   className={`text-sm font-medium ${
-//                     p.is_active
-//                       ? "text-red-600"
-//                       : "text-green-600"
-//                   } hover:underline`}
-//                 >
-//                   {p.is_active ? "Archive" : "Unarchive"}
-//                 </button>
-//               </div>
-//             </div>
+//           {properties.map((property) => (
+//             <SellerPropertyCard
+//               key={property.id}
+//               property={property}
+//               onToggle={handleToggleArchive}
+//             />
 //           ))}
 //         </div>
 //       )}
@@ -125,6 +94,7 @@ import {
   getMyProperties,
   toggleArchiveProperty,
 } from "../../api/sellerApi";
+import SellerPropertyCard from "./SellerPropertycard";
 
 export default function SellerDashboard() {
   const navigate = useNavigate();
@@ -140,7 +110,7 @@ export default function SellerDashboard() {
       const res = await getMyProperties();
       setProperties(res.data);
     } catch (err) {
-      console.error("Failed to load properties", err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -162,70 +132,80 @@ export default function SellerDashboard() {
         )
       );
     } catch {
-      alert("Failed to update property status");
+      alert("Failed to update status");
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        Loading...
+      <div className="min-h-screen flex items-center justify-center text-slate-500">
+        Loading dashboard...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-8 bg-slate-100">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Seller Dashboard</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-6 py-10">
+      <div className="max-w-7xl mx-auto">
 
-        <button
-          onClick={() => navigate("/seller/add-property")}
-          className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
-        >
-          + Add Property
-        </button>
-      </div>
+        {/* HEADER */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+          <div>
+            <h1 className="text-3xl font-semibold text-white">
+              Seller Dashboard
+            </h1>
+            <p className="text-slate-400 mt-1">
+              Manage and track your property listings
+            </p>
+          </div>
 
-      {properties.length === 0 ? (
-        <p className="text-gray-500">No properties posted yet.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {properties.map((p) => (
-            <div
-              key={p.id}
-              className={`bg-white p-5 rounded-xl shadow ${
-                !p.is_active && "opacity-60 border border-dashed"
-              }`}
-            >
-              <h3 className="font-semibold text-lg">{p.title}</h3>
-
-              <p className="text-sm text-gray-500 mt-1">
-                {p.city} • {p.locality}
-              </p>
-
-              <p className="mt-2 font-medium">₹ {p.price}</p>
-
-              <div className="flex justify-between items-center mt-4">
-                <span className="text-xs capitalize text-gray-600">
-                  Status: {p.status}
-                </span>
-
-                <button
-                  onClick={() => handleToggleArchive(p.id)}
-                  className={`text-sm font-medium ${
-                    p.is_active
-                      ? "text-red-600"
-                      : "text-green-600"
-                  } hover:underline`}
-                >
-                  {p.is_active ? "Archive" : "Unarchive"}
-                </button>
-              </div>
-            </div>
-          ))}
+          <button
+            onClick={() => navigate("/seller/add-property")}
+            className="
+              px-6 py-3 rounded-xl
+              bg-gradient-to-r from-indigo-600 to-purple-600
+              text-white font-semibold
+              hover:from-indigo-700 hover:to-purple-700
+              shadow-lg transition
+            "
+          >
+            + Add Property
+          </button>
         </div>
-      )}
+
+        {/* CONTENT CARD */}
+        <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-6">
+
+          {properties.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-slate-500 mb-4">
+                You haven’t listed any properties yet.
+              </p>
+              <button
+                onClick={() => navigate("/seller/add-property")}
+                className="
+                  px-6 py-3 rounded-lg
+                  bg-indigo-600 text-white
+                  hover:bg-indigo-700 transition
+                "
+              >
+                Create Your First Property
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {properties.map((property) => (
+                <SellerPropertyCard
+                  key={property.id}
+                  property={property}
+                  onToggle={handleToggleArchive}
+                />
+              ))}
+            </div>
+          )}
+
+        </div>
+      </div>
     </div>
   );
 }

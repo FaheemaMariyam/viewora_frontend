@@ -16,6 +16,8 @@ import RoleBasedRoute from "./auth/RoleBasedRoute";
 import Chats from "./pages/chat/Chats";
 import SellerDashboard from "./pages/seller/SellerDashboard";
 import AddProperty from "./pages/seller/AddProperty";
+import SellerPropertyDetails from "./pages/seller/SellerPropertyDetails";
+import EditProperty from "./pages/seller/EditProperty";
 
 const Router = () => (
   <Routes>
@@ -80,6 +82,23 @@ const Router = () => (
     </RoleBasedRoute>
   }
 />
+<Route
+  path="/seller/properties/:id"
+  element={
+    <RoleBasedRoute role="seller">
+      <SellerPropertyDetails />
+    </RoleBasedRoute>
+  }
+/>
+<Route
+  path="/seller/edit-property/:id"
+  element={
+    <RoleBasedRoute role="seller">
+      <EditProperty />
+    </RoleBasedRoute>
+  }
+/>
+
   </Routes>
 );
 

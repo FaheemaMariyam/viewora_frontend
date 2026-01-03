@@ -9,5 +9,18 @@ export const toggleArchiveProperty = (id) =>
   );
 
 
-export const createProperty = (data) =>
-  axiosInstance.post("/api/properties/create/", data);
+// export const createProperty = (data) =>
+//   axiosInstance.post("/api/properties/create/", data);
+export const createProperty = (formData) =>
+  axiosInstance.post("/api/properties/create/", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+export const updateProperty = (id, formData) =>
+  axiosInstance.patch(
+    `/api/properties/seller/property/${id}/update/`,
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
