@@ -2,7 +2,7 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../auth/AuthContext";
-
+import { closeInterest } from "../../api/brokerApi";
 import {
   getAvailableInterests,
   getAssignedInterests,
@@ -10,7 +10,7 @@ import {
 } from "../../api/brokerApi";
 
 import ChatBox from "../../components/ChatBox";
-
+import { startInterest } from "../../api/brokerApi";
 export default function BrokerDashboard() {
   const { user, loading } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -144,7 +144,33 @@ export default function BrokerDashboard() {
           {assignedInterests.map((interest) => (
             <div
               key={interest.id}
-              onClick={() => setSelectedInterest(interest)}
+              // onClick={() => setSelectedInterest(interest)}
+              onClick={async () => {
+  setSelectedInterest(interest);
+
+  if (interest.status === "assigned") {
+    try {
+      await startInterest(interest.id);
+
+      // update list
+      setAssignedInterests((prev) =>
+        prev.map((i) =>
+          i.id === interest.id
+            ? { ...i, status: "in_progress" }
+            : i
+        )
+      );
+
+      // update selected interest
+      setSelectedInterest((prev) =>
+        prev ? { ...prev, status: "in_progress" } : prev
+      );
+    } catch (err) {
+      console.error("Failed to start interest", err);
+    }
+  }
+}}
+
               className={`border p-3 mb-3 rounded-lg cursor-pointer transition
                 ${
                   selectedInterest?.id === interest.id
@@ -178,6 +204,26 @@ export default function BrokerDashboard() {
                   Chat with {selectedInterest.client}
                 </p>
               </div>
+              {selectedInterest?.status === "in_progress" && (
+  <button
+    onClick={async () => {
+      if (!window.confirm("Are you sure you want to close this deal?")) return;
+
+      await closeInterest(selectedInterest.id);
+
+      alert("Deal closed successfully");
+
+      setSelectedInterest(null);
+      fetchAll(); // reload lists
+    }}
+    className="mb-3 w-full py-2 rounded
+      bg-green-600 text-white text-sm font-semibold
+      hover:bg-green-700"
+  >
+    Close Deal
+  </button>
+)}
+
 
               <ChatBox interestId={selectedInterest.id} />
             </>

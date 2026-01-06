@@ -15,3 +15,6 @@ export const acceptInterest = (id) =>
 // Close deal
 export const closeInterest = (id) =>
   axiosInstance.post(`/api/interests/interest/${id}/close/`);
+
+export const startInterest = (interestId) =>
+  axiosInstance.post(`/api/interests/interest/${interestId}/start/`);
