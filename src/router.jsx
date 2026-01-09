@@ -18,7 +18,8 @@ import SellerDashboard from "./pages/seller/SellerDashboard";
 import AddProperty from "./pages/seller/AddProperty";
 import SellerPropertyDetails from "./pages/seller/SellerPropertyDetails";
 import EditProperty from "./pages/seller/EditProperty";
-
+import Notifications from "./pages/Notifications";
+import BrokerOTP from "./pages/broker/BrokerOTP";
 const Router = () => (
   <Routes>
     <Route path="/" element={<Home />} />
@@ -98,6 +99,15 @@ const Router = () => (
     </RoleBasedRoute>
   }
 />
+<Route
+  path="/notifications"
+  element={
+    <ProtectedRoute>
+      <Notifications />
+    </ProtectedRoute>
+  }
+/>
+<Route path="/broker-otp" element={<BrokerOTP />} />
 
   </Routes>
 );

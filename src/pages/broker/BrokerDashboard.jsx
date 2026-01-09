@@ -231,9 +231,18 @@ export default function BrokerDashboard() {
             <div className="h-full flex items-center justify-center text-gray-400">
               Select a client to start chatting
             </div>
+            
           )}
         </div>
-
+          <button
+  onClick={async () => {
+    const permission = await Notification.requestPermission();
+    console.log("Permission:", permission);
+  }}
+  className="px-4 py-2 bg-indigo-600 text-white rounded-lg"
+>
+  Enable Notifications
+</button>
       </div>
     </div>
   );

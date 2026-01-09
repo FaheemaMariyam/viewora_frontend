@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
@@ -103,7 +102,6 @@ export default function EditProperty() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
-
           {/* HEADER */}
           <div className="p-6 border-b">
             <h1 className="text-2xl font-semibold text-slate-800">
@@ -115,7 +113,6 @@ export default function EditProperty() {
           </div>
 
           <form onSubmit={handleSubmit}>
-
             {/* ---------- IMAGES ---------- */}
             <Section title="Property Images">
               {form.images?.length > 0 ? (
@@ -160,24 +157,59 @@ export default function EditProperty() {
             {/* ---------- BASIC INFO ---------- */}
             <Section title="Basic Information">
               <Grid>
-                <Input name="title" value={form.title} onChange={handleChange} placeholder="Title" />
-                <Select name="property_type" value={form.property_type} onChange={handleChange}>
+                <Input
+                  name="title"
+                  value={form.title}
+                  onChange={handleChange}
+                  placeholder="Title"
+                />
+                <Select
+                  name="property_type"
+                  value={form.property_type}
+                  onChange={handleChange}
+                >
                   <option value="house">House</option>
                   <option value="flat">Flat</option>
                   <option value="plot">Plot</option>
                   <option value="commercial">Commercial</option>
                 </Select>
-                <Textarea span name="description" value={form.description} onChange={handleChange} placeholder="Description" />
+                <Textarea
+                  span
+                  name="description"
+                  value={form.description}
+                  onChange={handleChange}
+                  placeholder="Description"
+                />
               </Grid>
             </Section>
 
             {/* ---------- PRICE & AREA ---------- */}
             <Section title="Pricing & Area">
               <Grid>
-                <Input type="number" name="price" value={form.price} onChange={handleChange} placeholder="Price" />
-                <Checkbox name="price_negotiable" checked={form.price_negotiable} onChange={handleChange} label="Price Negotiable" />
-                <Input name="area_size" value={form.area_size || ""} onChange={handleChange} placeholder="Area Size" />
-                <Select name="area_unit" value={form.area_unit} onChange={handleChange}>
+                <Input
+                  type="number"
+                  name="price"
+                  value={form.price}
+                  onChange={handleChange}
+                  placeholder="Price"
+                />
+                <Checkbox
+                  name="price_negotiable"
+                  checked={form.price_negotiable}
+                  onChange={handleChange}
+                  label="Price Negotiable"
+                />
+                <Input
+                  name="area_size"
+                  value={form.area_size || ""}
+                  onChange={handleChange}
+                  placeholder="Area Size"
+                />
+                <Select
+                  name="area_unit"
+                  value={form.area_unit}
+                  onChange={handleChange}
+                >
                   <option value="sqft">Sqft</option>
                   <option value="cent">Cent</option>
                 </Select>
@@ -187,23 +219,78 @@ export default function EditProperty() {
             {/* ---------- LOCATION ---------- */}
             <Section title="Location">
               <Grid>
-                <Input name="city" value={form.city} onChange={handleChange} placeholder="City" />
-                <Input name="locality" value={form.locality} onChange={handleChange} placeholder="Locality" />
-                <Textarea span name="address" value={form.address} onChange={handleChange} placeholder="Address" />
-                <Input name="latitude" value={form.latitude || ""} onChange={handleChange} placeholder="Latitude" />
-                <Input name="longitude" value={form.longitude || ""} onChange={handleChange} placeholder="Longitude" />
+                <Input
+                  name="city"
+                  value={form.city}
+                  onChange={handleChange}
+                  placeholder="City"
+                />
+                <Input
+                  name="locality"
+                  value={form.locality}
+                  onChange={handleChange}
+                  placeholder="Locality"
+                />
+                <Textarea
+                  span
+                  name="address"
+                  value={form.address}
+                  onChange={handleChange}
+                  placeholder="Address"
+                />
+                <Input
+                  name="latitude"
+                  value={form.latitude || ""}
+                  onChange={handleChange}
+                  placeholder="Latitude"
+                />
+                <Input
+                  name="longitude"
+                  value={form.longitude || ""}
+                  onChange={handleChange}
+                  placeholder="Longitude"
+                />
               </Grid>
             </Section>
 
             {/* ---------- FEATURES ---------- */}
             <Section title="Features & Status">
               <Grid>
-                <Input name="bedrooms" value={form.bedrooms || ""} onChange={handleChange} placeholder="Bedrooms" />
-                <Input name="bathrooms" value={form.bathrooms || ""} onChange={handleChange} placeholder="Bathrooms" />
-                <Checkbox name="parking_available" checked={form.parking_available} onChange={handleChange} label="Parking Available" />
-                <Input name="furnishing_status" value={form.furnishing_status || ""} onChange={handleChange} placeholder="Furnishing Status" />
-                <Input name="facing" value={form.facing || ""} onChange={handleChange} placeholder="Facing" />
-                <Select name="status" value={form.status} onChange={handleChange}>
+                <Input
+                  name="bedrooms"
+                  value={form.bedrooms || ""}
+                  onChange={handleChange}
+                  placeholder="Bedrooms"
+                />
+                <Input
+                  name="bathrooms"
+                  value={form.bathrooms || ""}
+                  onChange={handleChange}
+                  placeholder="Bathrooms"
+                />
+                <Checkbox
+                  name="parking_available"
+                  checked={form.parking_available}
+                  onChange={handleChange}
+                  label="Parking Available"
+                />
+                <Input
+                  name="furnishing_status"
+                  value={form.furnishing_status || ""}
+                  onChange={handleChange}
+                  placeholder="Furnishing Status"
+                />
+                <Input
+                  name="facing"
+                  value={form.facing || ""}
+                  onChange={handleChange}
+                  placeholder="Facing"
+                />
+                <Select
+                  name="status"
+                  value={form.status}
+                  onChange={handleChange}
+                >
                   <option value="published">Published</option>
                   <option value="sold">Sold</option>
                   <option value="archived">Archived</option>
@@ -226,7 +313,6 @@ export default function EditProperty() {
                 {saving ? "Updating..." : "Update Property"}
               </button>
             </div>
-
           </form>
         </div>
       </div>
@@ -248,7 +334,9 @@ function Section({ title, children }) {
 }
 
 function Grid({ children }) {
-  return <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>;
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>
+  );
 }
 
 function Input(props) {

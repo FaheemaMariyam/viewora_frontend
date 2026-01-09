@@ -3,6 +3,8 @@ import { useState,useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../api/authApi";
 import { AuthContext } from "../auth/AuthContext";
+import { GoogleLogin } from "@react-oauth/google"; 
+import { googleLogin } from "../api/authApi";
 
 export default function Login() {
   const { loginUser } = useContext(AuthContext);
@@ -11,25 +13,67 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+//     setError("");
 
-    try {
-      await login({
-        username: e.target.username.value,
-        password: e.target.password.value,
+//     try {
+//       await login({
+//         username: e.target.username.value,
+//         password: e.target.password.value,
+//       });
+
+//       await loginUser();
+//       const res = await login(data);
+
+// if (res.data.otp_required && res.data.role === "broker") {
+//   navigate("/broker-otp");
+//   return;
+// }
+// axios.post("/api/auth/broker/verify-otp/", {
+//   username,
+//   otp
+// });
+
+
+//       navigate("/profile");
+//     } catch (err) {
+//       setError("Login failed");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError("");
+
+  try {
+    const res = await login({
+      username: e.target.username.value,
+      password: e.target.password.value,
+    });
+
+    // 🔐 Broker OTP flow
+    if (res.data?.otp_required && res.data.role === "broker") {
+      navigate("/broker-otp", {
+        state: { username: e.target.username.value },
       });
-
-      await loginUser();
-      navigate("/profile");
-    } catch (err) {
-      setError("Login failed");
-    } finally {
-      setLoading(false);
+      return;
     }
-  };
+
+    // ✅ Normal login
+    await loginUser();
+    navigate("/profile");
+
+  } catch {
+    setError("Login failed");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center 
@@ -114,6 +158,21 @@ export default function Login() {
               Forgot password?
             </button>
           </form>
+          <div className="mt-4 flex justify-center">
+  <GoogleLogin
+    onSuccess={async (res) => {
+      try {
+        await googleLogin(res.credential);
+        await loginUser();
+        navigate("/profile");
+      } catch {
+        setError("Google login failed");
+      }
+    }}
+    onError={() => setError("Google login failed")}
+  />
+</div>
+
         </div>
       </div>
     </div>

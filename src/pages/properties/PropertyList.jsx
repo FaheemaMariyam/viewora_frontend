@@ -47,18 +47,9 @@ export default function PropertyList() {
     setLoading(false);
   };
 
-  /* 🔴 LIVE SEARCH EFFECT */
-//   useEffect(() => {
-//     setSearchParams((prev) => {
-//       const next = Object.fromEntries(prev);
-//       if (debouncedSearch) next.search = debouncedSearch;
-//       else delete next.search;
-//       next.page = 1;
-//       return next;
-//     });
-//   }, [debouncedSearch]);
+ 
 useEffect(() => {
-  // ✅ Do nothing if search is empty
+  //  Do nothing if search is empty
   if (!debouncedSearch) return;
 
   setSearchParams((prev) => {
@@ -70,7 +61,7 @@ useEffect(() => {
 }, [debouncedSearch]);
 
 
-  /* 🔵 LOAD ON PARAM CHANGE */
+  /*  LOAD ON PARAM CHANGE */
   useEffect(() => {
     load();
   }, [searchParams]);

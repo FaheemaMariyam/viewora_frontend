@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { fetchPropertyDetail, createInterest } from "../../api/propertyApi";
@@ -38,7 +37,6 @@ export default function PropertyDetails() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-12 px-4">
       <div className="max-w-6xl mx-auto bg-white/95 rounded-2xl shadow-2xl overflow-hidden">
-
         {/* IMAGE GALLERY */}
         <div className="p-6 border-b">
           {activeImage && (
@@ -70,9 +68,7 @@ export default function PropertyDetails() {
           <div className="flex flex-col md:flex-row justify-between gap-4">
             <div>
               <h1 className="text-3xl font-semibold">{property.title}</h1>
-              <p className="text-slate-500 mt-1">
-                {property.address}
-              </p>
+              <p className="text-slate-500 mt-1">{property.address}</p>
             </div>
 
             <div className="text-right">
@@ -90,25 +86,44 @@ export default function PropertyDetails() {
         </Section>
 
         {/* DESCRIPTION */}
-        <Section title="Description">
-          {property.description}
-        </Section>
+        <Section title="Description">{property.description}</Section>
 
         {/* DETAILS GRID */}
         <Section title="Property Details">
           <Grid>
             <Item label="Property Type" value={property.property_type} />
-            <Item label="Area" value={`${property.area_size} ${property.area_unit}`} />
+            <Item
+              label="Area"
+              value={`${property.area_size} ${property.area_unit}`}
+            />
             <Item label="Bedrooms" value={property.bedrooms ?? "-"} />
             <Item label="Bathrooms" value={property.bathrooms ?? "-"} />
-            <Item label="Parking" value={property.parking_available ? "Yes" : "No"} />
-            <Item label="Furnishing" value={property.furnishing_status ?? "-"} />
+            <Item
+              label="Parking"
+              value={property.parking_available ? "Yes" : "No"}
+            />
+            <Item
+              label="Furnishing"
+              value={property.furnishing_status ?? "-"}
+            />
             <Item label="Facing" value={property.facing ?? "-"} />
-            <Item label="Property Age" value={property.property_age_years ?? "-"} />
+            <Item
+              label="Property Age"
+              value={property.property_age_years ?? "-"}
+            />
             <Item label="Ownership Count" value={property.ownership_count} />
-            <Item label="Construction Year" value={property.construction_year ?? "-"} />
-            <Item label="Last Renovated" value={property.last_renovated_year ?? "-"} />
-            <Item label="Reason for Selling" value={property.reason_for_selling ?? "-"} />
+            <Item
+              label="Construction Year"
+              value={property.construction_year ?? "-"}
+            />
+            <Item
+              label="Last Renovated"
+              value={property.last_renovated_year ?? "-"}
+            />
+            <Item
+              label="Reason for Selling"
+              value={property.reason_for_selling ?? "-"}
+            />
           </Grid>
         </Section>
 
@@ -169,9 +184,7 @@ function Section({ title, children }) {
 
 function Grid({ children }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {children}
-    </div>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">{children}</div>
   );
 }
 

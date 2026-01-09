@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createProperty } from "../../api/sellerApi";
@@ -47,9 +46,7 @@ export default function AddProperty() {
     setLoading(true);
 
     const formData = new FormData();
-    Object.entries(form).forEach(([key, value]) =>
-      formData.append(key, value)
-    );
+    Object.entries(form).forEach(([key, value]) => formData.append(key, value));
 
     images.forEach((img) => formData.append("images", img));
 
@@ -66,7 +63,6 @@ export default function AddProperty() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-12 px-6">
       <div className="max-w-5xl mx-auto">
-
         {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-white tracking-tight">
@@ -80,7 +76,6 @@ export default function AddProperty() {
         {/* Card */}
         <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-8">
           <form onSubmit={handleSubmit} className="space-y-8">
-
             {/* Basic Info */}
             <div>
               <h2 className="text-lg font-semibold text-slate-800 mb-4">
@@ -211,7 +206,6 @@ export default function AddProperty() {
                 {loading ? "Creating Property..." : "Create Property"}
               </button>
             </div>
-
           </form>
         </div>
       </div>

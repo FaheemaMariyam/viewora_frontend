@@ -1,60 +1,19 @@
-
-import { useContext, useState ,useEffect} from "react";
+import { useContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../auth/AuthContext";
 import { logout } from "../api/authApi";
 import axiosInstance from "../utils/axiosInstance";
 
+import { setupNotifications } from "../firebase/notification";
 
 export default function Navbar() {
   // const { user, loading, logoutUser } = useContext(AuthContext);
-  const {
-  user,
-  loading,
-  logoutUser,
-  totalUnread,
-  loadUnread
-} = useContext(AuthContext);
+  const { user, loading, logoutUser, totalUnread, loadUnread } =
+    useContext(AuthContext);
 
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
-  // const [totalUnread, setTotalUnread] = useState(0);
-
-// useEffect(() => {
-//   if (!user) return;
-
-//   const loadUnread = async () => {
-//     try {
-//       let res;
-
-//       if (user.role === "client") {
-//         res = await axiosInstance.get(
-//           "/api/interests/client/interests/"
-//         );
-//       } else if (user.role === "broker") {
-//         res = await axiosInstance.get(
-//           "/api/interests/broker/interests/"
-//         );
-//       } else {
-//         return;
-//       }
-
-//       const total = res.data.reduce(
-//         (sum, i) => sum + (i.unread_count || 0),
-//         0
-//       );
-
-//       setTotalUnread(total);
-//     } catch {
-//       console.warn("Unread fetch skipped");
-//     }
-//   };
-
-//   loadUnread();
-// }, [user]);
-
-
 
   if (loading) return null;
 
@@ -65,8 +24,7 @@ export default function Navbar() {
     setOpen(false);
   };
 
-  const isActive = (path) =>
-    location.pathname.startsWith(path);
+  const isActive = (path) => location.pathname.startsWith(path);
 
   return (
     <nav className="sticky top-0 z-50">
@@ -79,7 +37,6 @@ export default function Navbar() {
         "
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-3 flex justify-between items-center">
-
           {/* Brand */}
           <div
             onClick={() => navigate("/")}
@@ -104,7 +61,6 @@ export default function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-6 text-sm font-medium">
-
             {!user && (
               <>
                 <button
@@ -142,22 +98,40 @@ export default function Navbar() {
                   Properties
                 </button>
                 <button
-      onClick={() => navigate("/chats")}
-      className={isActive("/chats") || isActive("/broker")
-        ? "text-white"
-        : "text-white/70 hover:text-white"}
-    >
-      {/* Chats */}
-      <span className="relative">
-  Chats
+  onClick={() => navigate("/notifications")}
+  className="relative text-white/80 hover:text-white"
+>
+  🔔
   {totalUnread > 0 && (
-    <span className="absolute -top-2 -right-3 bg-red-600 text-white text-xs px-1 rounded-full">
+    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-1 rounded-full">
       {totalUnread}
     </span>
   )}
-</span>
+</button>
 
-    </button>
+                <button
+                  // onClick={() => navigate("/chats")}
+                  onClick={async () => {
+  await loadUnread();   //  sync unread count
+  navigate("/chats");
+}}
+
+                  className={
+                    isActive("/chats") || isActive("/broker")
+                      ? "text-white"
+                      : "text-white/70 hover:text-white"
+                  }
+                >
+                  {/* Chats */}
+                  <span className="relative">
+                    Chats
+                    {totalUnread > 0 && (
+                      <span className="absolute -top-2 -right-3 bg-red-600 text-white text-xs px-1 rounded-full">
+                        {totalUnread}
+                      </span>
+                    )}
+                  </span>
+                </button>
 
                 <div className="px-3 py-1 rounded-full bg-white/10 text-white/90 capitalize text-xs">
                   {user.role}
@@ -196,7 +170,6 @@ export default function Navbar() {
         {/* Mobile Menu */}
         {open && (
           <div className="md:hidden px-4 pb-4 space-y-3 text-sm">
-
             {!user && (
               <>
                 <button
@@ -232,24 +205,23 @@ export default function Navbar() {
                 >
                   Properties
                 </button>
-                  <button
-      onClick={() => {
-        navigate("/chats");
-        setOpen(false);
-      }}
-      className="block text-white/80"
-    >
-      {/* Chats */}
-      <span className="relative">
-  Chats
-  {totalUnread > 0 && (
-    <span className="absolute -top-2 -right-3 bg-red-600 text-white text-xs px-1 rounded-full">
-      {totalUnread}
-    </span>
-  )}
-</span>
-
-    </button>
+                <button
+                  onClick={() => {
+                    navigate("/chats");
+                    setOpen(false);
+                  }}
+                  className="block text-white/80"
+                >
+                  {/* Chats */}
+                  <span className="relative">
+                    Chats
+                    {totalUnread > 0 && (
+                      <span className="absolute -top-2 -right-3 bg-red-600 text-white text-xs px-1 rounded-full">
+                        {totalUnread}
+                      </span>
+                    )}
+                  </span>
+                </button>
                 <button
                   onClick={() => {
                     navigate("/profile");
@@ -260,10 +232,7 @@ export default function Navbar() {
                   Profile
                 </button>
 
-                <button
-                  onClick={handleLogout}
-                  className="block text-red-400"
-                >
+                <button onClick={handleLogout} className="block text-red-400">
                   Logout
                 </button>
               </>

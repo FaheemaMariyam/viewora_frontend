@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getProfile } from "../api/authApi";
 import axiosInstance from "../utils/axiosInstance";
+import { setupNotifications } from "../firebase/notification";
 
 export const AuthContext = createContext(null);
 
@@ -9,25 +10,51 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔔 GLOBAL unread count
+  //  GLOBAL unread count
   const [totalUnread, setTotalUnread] = useState(0);
 
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const res = await getProfile();
-        setUser(res.data);
-      } catch {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    loadUser();
-  }, []);
 
-  // 🔔 Load unread count (used by Navbar)
+// useEffect(() => {
+//   const loadUser = async () => {
+ 
+// if (
+//   ["/login", "/signup", "/broker-otp"].includes(window.location.pathname)
+// ) {
+//   setLoading(false);
+//   return;
+// }
+
+//     try {
+//       const res = await getProfile();
+//       setUser(res.data);
+//     } catch {
+//       setUser(null);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   loadUser();
+// }, []);
+useEffect(() => {
+  const loadUser = async () => {
+    try {
+      const res = await getProfile();
+      setUser(res.data);
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadUser();
+}, []);
+
+
+
+  //  Load unread count (used by Navbar)
   const loadUnread = async () => {
     if (!user) return;
 
@@ -49,6 +76,14 @@ export function AuthProvider({ children }) {
       setTotalUnread(0);
     }
   };
+const loadNotificationUnread = async () => {
+  try {
+    const res = await getUnreadNotificationCount();
+    setTotalUnread(res.data.count);
+  } catch {
+    setTotalUnread(0);
+  }
+};
 
   const loginUser = async () => {
     try {
@@ -74,6 +109,7 @@ export function AuthProvider({ children }) {
         loginUser,
         logoutUser,
         totalUnread,
+        loadNotificationUnread,
         setTotalUnread,
         loadUnread,
       }}
