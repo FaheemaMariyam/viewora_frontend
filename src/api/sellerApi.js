@@ -19,3 +19,14 @@ export const updateProperty = (id, formData) =>
     formData,
     { headers: { "Content-Type": "multipart/form-data" } }
   );
+export const getVideoPresignedUrl = (propertyId, payload) =>
+  axiosInstance.post(
+    `/api/properties/seller/property/${propertyId}/video/presign/`,
+    payload
+  );
+
+export const attachVideoToProperty = (propertyId, payload) =>
+  axiosInstance.post(
+    `/api/properties/seller/property/${propertyId}/video/attach/`,
+    payload
+  );
