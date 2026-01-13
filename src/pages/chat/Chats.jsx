@@ -1,54 +1,62 @@
 
-// import { useEffect, useState, useContext } from "react";
+// import { useEffect, useRef, useState, useContext } from "react";
 // import { AuthContext } from "../../auth/AuthContext";
 // import ChatBox from "../../components/ChatBox";
+// import VideoCall from "../../components/VideoCall";
 // import axiosInstance from "../../utils/axiosInstance";
 
 // export default function Chats() {
-//   const {
-//     user,
-//     loading,
-//     setTotalUnread,
-//   } = useContext(AuthContext);
+//   const { user, loading, setTotalUnread } = useContext(AuthContext);
 
 //   const [interests, setInterests] = useState([]);
 //   const [selectedInterest, setSelectedInterest] = useState(null);
 //   const [showVideo, setShowVideo] = useState(false);
+
+//   const socketRef = useRef(null);
+
+//   /* -------------------------------
+//      LOAD CHAT LIST (WITH POLLING)
+//   -------------------------------- */
+//   const loadInterests = async () => {
+//     if (!user) return;
+
+//     const url =
+//       user.role === "broker"
+//         ? "/api/interests/broker/interests/"
+//         : "/api/interests/client/interests/";
+
+//     const res = await axiosInstance.get(url);
+//     setInterests(res.data);
+
+//     // update navbar unread count
+//     const totalUnread = res.data.reduce(
+//       (sum, i) => sum + (i.unread_count || 0),
+//       0
+//     );
+//     setTotalUnread(totalUnread);
+//   };
+
 //   useEffect(() => {
 //     if (!user || loading) return;
 
-//     if (user.role === "client") {
-//       fetchClientChats();
-//     } else if (user.role === "broker") {
-//       fetchBrokerChats();
-//     }
+//     loadInterests(); // initial load
+
+//     const interval = setInterval(loadInterests, 5000); // 🔁 poll every 5s
+//     return () => clearInterval(interval);
 //   }, [user, loading]);
 
-//   const fetchClientChats = async () => {
-//     const res = await axiosInstance.get(
-//       "/api/interests/client/interests/"
-//     );
-//     setInterests(res.data);
-//   };
-
-//   const fetchBrokerChats = async () => {
-//     const res = await axiosInstance.get(
-//       "/api/interests/broker/interests/"
-//     );
-//     setInterests(res.data);
-//   };
-
-//   // 🔥 KEY LOGIC — clear unread without refresh
+//   /* -------------------------------
+//      SELECT CHAT
+//   -------------------------------- */
 //   const handleSelectChat = async (interest) => {
 //     setSelectedInterest(interest);
 
 //     if (interest.unread_count > 0) {
-//       // mark read in backend
 //       await axiosInstance.post(
 //         `/api/chat/interest/${interest.id}/read/`
 //       );
 
-//       // update chat list instantly
+//       // update list immediately
 //       setInterests((prev) =>
 //         prev.map((i) =>
 //           i.id === interest.id
@@ -57,69 +65,104 @@
 //         )
 //       );
 
-//       // update navbar instantly
 //       setTotalUnread((prev) =>
 //         Math.max(prev - interest.unread_count, 0)
 //       );
 //     }
 //   };
 
+//   /* -------------------------------
+//      UI
+//   -------------------------------- */
 //   return (
-//     <div className="min-h-screen p-6 bg-slate-100">
-//       <h1 className="text-2xl font-semibold mb-6">My Chats</h1>
+//     <div className="grid grid-cols-1 md:grid-cols-3 h-screen">
+//       {/* LEFT: CHAT LIST */}
+//       <div className="border-r p-4 overflow-y-auto">
+//         <h2 className="font-semibold mb-4">My Chats</h2>
 
-//       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-//         {/* LEFT */}
-//         <div className="bg-white p-4 rounded shadow">
-//           {interests.length === 0 && (
-//             <p className="text-sm text-gray-500">
-//               No chats yet
+//         {interests.length === 0 && (
+//           <p className="text-sm text-gray-500">
+//             No chats yet
+//           </p>
+//         )}
+
+//         {interests.map((i) => (
+//           <div
+//             key={i.id}
+//             onClick={() => handleSelectChat(i)}
+//             className={`p-3 mb-2 rounded cursor-pointer ${
+//               selectedInterest?.id === i.id
+//                 ? "bg-indigo-50 border border-indigo-400"
+//                 : "hover:bg-slate-50"
+//             }`}
+//           >
+//             <p className="font-medium text-sm">
+//               {i.property}
 //             </p>
-//           )}
 
-//           {interests.map((interest) => (
-//             <div
-//               key={interest.id}
-//               onClick={() => handleSelectChat(interest)}
-//               className="border p-3 mb-2 rounded cursor-pointer hover:bg-slate-50"
-//             >
-//               <p className="font-medium">
-//                 {interest.property}
-//               </p>
+//             {i.unread_count > 0 && (
+//               <span className="inline-block mt-1 text-xs bg-red-100 text-red-600 px-2 py-1 rounded">
+//                 {i.unread_count} unread
+//               </span>
+//             )}
+//           </div>
+//         ))}
+//       </div>
 
-//               {interest.unread_count > 0 && (
-//                 <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded">
-//                   {interest.unread_count} unread
-//                 </span>
-//               )}
+//       {/* RIGHT: CHAT + VIDEO */}
+//       <div className="md:col-span-2 flex flex-col relative">
+//         {!selectedInterest && (
+//           <div className="flex-1 flex items-center justify-center text-gray-400">
+//             Select a chat to start
+//           </div>
+//         )}
+
+//         {selectedInterest && (
+//           <>
+//             {/* HEADER */}
+//             <div className="flex justify-between items-center p-3 bg-white border-b">
+//               <div>
+//                 <p className="font-semibold">
+//                   {selectedInterest.property}
+//                 </p>
+//                 <p className="text-xs text-gray-500">
+//                   Live chat
+//                 </p>
+//               </div>
+
+//               <button
+//                 onClick={() => setShowVideo(true)}
+//                 className="bg-indigo-600 text-white px-3 py-1 rounded text-sm"
+//               >
+//                 📹 Video Call
+//               </button>
 //             </div>
-//           ))}
-//         </div>
-//         {showVideo && (
-//   <VideoCall
-//     socket={socketRef.current}
-//     username={user.username}
-//     onClose={() => setShowVideo(false)}
-//   />
-// )}
 
-// <button
-//   onClick={() => setShowVideo(true)}
-//   className="mb-2 bg-indigo-600 text-white px-3 py-1 rounded"
-// >
-//   📹 Video Call
-// </button>
+//             {/* VIDEO CALL */}
+//             {showVideo && socketRef.current && (
+//               <div className="absolute top-12 left-0 right-0 z-20 px-4">
+//                 {/* <VideoCall
+//                   socket={socketRef.current}
+//                   onClose={() => setShowVideo(false)}
+//                 /> */}
+//                 <VideoCall
+//   socket={socketRef.current}
+//   currentUser={user.username}
+//   onClose={() => setShowVideo(false)}
+// />
 
-//         {/* RIGHT */}
-//         <div className="bg-white p-4 rounded shadow md:col-span-2">
-//           {selectedInterest ? (
-//             <ChatBox interestId={selectedInterest.id} />
-//           ) : (
-//             <p className="text-gray-500">
-//               Select a chat to continue
-//             </p>
-//           )}
-//         </div>
+//               </div>
+//             )}
+
+//             {/* CHAT BOX */}
+//             <div className={`flex-1 ${showVideo ? "mt-[260px]" : ""}`}>
+//               <ChatBox
+//                 interestId={selectedInterest.id}
+//                 onSocketReady={(s) => (socketRef.current = s)}
+//               />
+//             </div>
+//           </>
+//         )}
 //       </div>
 //     </div>
 //   );
@@ -153,7 +196,6 @@ export default function Chats() {
     const res = await axiosInstance.get(url);
     setInterests(res.data);
 
-    // update navbar unread count
     const totalUnread = res.data.reduce(
       (sum, i) => sum + (i.unread_count || 0),
       0
@@ -164,9 +206,8 @@ export default function Chats() {
   useEffect(() => {
     if (!user || loading) return;
 
-    loadInterests(); // initial load
-
-    const interval = setInterval(loadInterests, 5000); // 🔁 poll every 5s
+    loadInterests();
+    const interval = setInterval(loadInterests, 5000);
     return () => clearInterval(interval);
   }, [user, loading]);
 
@@ -181,7 +222,6 @@ export default function Chats() {
         `/api/chat/interest/${interest.id}/read/`
       );
 
-      // update list immediately
       setInterests((prev) =>
         prev.map((i) =>
           i.id === interest.id
@@ -200,87 +240,111 @@ export default function Chats() {
      UI
   -------------------------------- */
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 h-screen">
-      {/* LEFT: CHAT LIST */}
-      <div className="border-r p-4 overflow-y-auto">
-        <h2 className="font-semibold mb-4">My Chats</h2>
-
-        {interests.length === 0 && (
-          <p className="text-sm text-gray-500">
-            No chats yet
+    <div className="h-screen grid grid-cols-1 md:grid-cols-[320px_1fr] bg-slate-100">
+      {/* ================= LEFT PANEL ================= */}
+      <aside className="bg-white border-r flex flex-col">
+        {/* Header */}
+        <div className="px-5 py-4 border-b">
+          <h2 className="text-lg font-semibold text-gray-900">
+            My Chats
+          </h2>
+          <p className="text-xs text-gray-500 mt-0.5">
+            Conversations with clients & brokers
           </p>
-        )}
+        </div>
 
-        {interests.map((i) => (
-          <div
-            key={i.id}
-            onClick={() => handleSelectChat(i)}
-            className={`p-3 mb-2 rounded cursor-pointer ${
-              selectedInterest?.id === i.id
-                ? "bg-indigo-50 border border-indigo-400"
-                : "hover:bg-slate-50"
-            }`}
-          >
-            <p className="font-medium text-sm">
-              {i.property}
+        {/* Chat List */}
+        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-2">
+          {interests.length === 0 && (
+            <p className="text-sm text-gray-400 text-center mt-10">
+              No chats yet
             </p>
+          )}
 
-            {i.unread_count > 0 && (
-              <span className="inline-block mt-1 text-xs bg-red-100 text-red-600 px-2 py-1 rounded">
-                {i.unread_count} unread
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
+          {interests.map((i) => {
+            const active = selectedInterest?.id === i.id;
 
-      {/* RIGHT: CHAT + VIDEO */}
-      <div className="md:col-span-2 flex flex-col relative">
+            return (
+              <div
+                key={i.id}
+                onClick={() => handleSelectChat(i)}
+                className={`p-3 rounded-xl cursor-pointer transition border ${
+                  active
+                    ? "bg-indigo-50 border-indigo-400"
+                    : "hover:bg-slate-50 border-transparent"
+                }`}
+              >
+                <div className="flex justify-between items-start">
+                  <p className="text-sm font-medium text-gray-900 line-clamp-1">
+                    {i.property}
+                  </p>
+
+                  {i.unread_count > 0 && (
+                    <span className="ml-2 min-w-[22px] h-[22px] text-xs bg-red-600 text-white rounded-full flex items-center justify-center">
+                      {i.unread_count}
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-xs text-gray-500 mt-1">
+                  Click to open chat
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </aside>
+
+      {/* ================= RIGHT PANEL ================= */}
+      <main className="flex flex-col relative bg-white">
         {!selectedInterest && (
-          <div className="flex-1 flex items-center justify-center text-gray-400">
-            Select a chat to start
+          <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
+            <div className="text-4xl mb-3">💬</div>
+            <p className="text-sm">
+              Select a conversation to start chatting
+            </p>
           </div>
         )}
 
         {selectedInterest && (
           <>
             {/* HEADER */}
-            <div className="flex justify-between items-center p-3 bg-white border-b">
+            <div className="flex items-center justify-between px-6 py-4 border-b bg-white sticky top-0 z-10">
               <div>
-                <p className="font-semibold">
+                <h3 className="text-sm font-semibold text-gray-900">
                   {selectedInterest.property}
-                </p>
-                <p className="text-xs text-gray-500">
+                </h3>
+                <div className="flex items-center gap-2 text-xs text-green-600 mt-0.5">
+                  <span className="w-2 h-2 bg-green-500 rounded-full" />
                   Live chat
-                </p>
+                </div>
               </div>
 
               <button
                 onClick={() => setShowVideo(true)}
-                className="bg-indigo-600 text-white px-3 py-1 rounded text-sm"
+                className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition shadow"
               >
                 📹 Video Call
               </button>
             </div>
 
-            {/* VIDEO CALL */}
+            {/* VIDEO CALL OVERLAY */}
             {showVideo && socketRef.current && (
-              <div className="absolute top-12 left-0 right-0 z-20 px-4">
-                {/* <VideoCall
-                  socket={socketRef.current}
-                  onClose={() => setShowVideo(false)}
-                /> */}
+              <div className="absolute top-20 left-0 right-0 z-20 px-6">
                 <VideoCall
-  socket={socketRef.current}
-  currentUser={user.username}
-  onClose={() => setShowVideo(false)}
-/>
-
+                  socket={socketRef.current}
+                  currentUser={user.username}
+                  onClose={() => setShowVideo(false)}
+                />
               </div>
             )}
 
             {/* CHAT BOX */}
-            <div className={`flex-1 ${showVideo ? "mt-[260px]" : ""}`}>
+            <div
+              className={`flex-1 ${
+                showVideo ? "mt-[280px]" : ""
+              }`}
+            >
               <ChatBox
                 interestId={selectedInterest.id}
                 onSocketReady={(s) => (socketRef.current = s)}
@@ -288,7 +352,7 @@ export default function Chats() {
             </div>
           </>
         )}
-      </div>
+      </main>
     </div>
   );
 }
