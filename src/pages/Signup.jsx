@@ -141,41 +141,23 @@ export default function Signup() {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center
-    bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-800
-    relative overflow-hidden"
-    >
-      {/* Ambient glows */}
-      <div className="absolute -top-32 -left-32 w-[420px] h-[420px] bg-indigo-600/20 blur-3xl rounded-full" />
-      <div className="absolute -bottom-32 -right-32 w-[420px] h-[420px] bg-slate-600/20 blur-3xl rounded-full" />
-
-      <div
-        className="relative w-full max-w-lg
-      bg-gradient-to-b from-white/95 to-white/85
-      backdrop-blur-xl
-      border border-white/30
-      rounded-3xl
-      shadow-[0_25px_70px_rgba(0,0,0,0.35)]
-      p-8 sm:p-10"
-      >
+    <div className="min-h-screen flex items-center justify-center bg-bg-page px-4 py-12">
+      
+      <div className="w-full max-w-lg bg-white border border-gray-200 rounded-lg shadow-lg p-8 sm:p-10">
+        
         {/* Header */}
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">
+          <h2 className="text-2xl font-bold text-brand-primary tracking-tight">
             Create your account
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Join <span className="font-medium text-indigo-700">Viewora</span> to
-            access premium real estate experiences
+          <p className="mt-2 text-sm text-text-muted">
+            Join <span className="font-semibold text-brand-primary">Viewora</span> to access premium real estate experiences
           </p>
         </div>
 
         {/* Error */}
         {error && (
-          <div
-            className="mb-6 text-sm text-red-700 bg-red-50
-          border border-red-200 px-4 py-3 rounded-xl text-center"
-          >
+          <div className="mb-6 text-sm text-red-600 bg-red-50 border border-red-100 px-4 py-3 rounded text-center">
             {error}
           </div>
         )}
@@ -183,47 +165,48 @@ export default function Signup() {
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Basic details */}
           <div className="space-y-4">
-            <input
-              name="username"
-              placeholder="Username"
-              required
-              className="w-full px-4 py-3 rounded-xl
-              bg-white/70 border border-gray-300/70
-              focus:ring-2 focus:ring-indigo-600 outline-none"
-            />
+            <div>
+              <label className="block text-sm font-medium text-text-main mb-1">Username</label>
+              <input
+                name="username"
+                placeholder="Username"
+                required
+                className="w-full px-3 py-2.5 rounded-md bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent transition-all shadow-sm"
+              />
+            </div>
 
-            <input
-              name="email"
-              type="email"
-              placeholder="Email address"
-              required
-              className="w-full px-4 py-3 rounded-xl
-              bg-white/70 border border-gray-300/70
-              focus:ring-2 focus:ring-indigo-600 outline-none"
-            />
+            <div>
+              <label className="block text-sm font-medium text-text-main mb-1">Email</label>
+              <input
+                name="email"
+                type="email"
+                placeholder="Email address"
+                required
+                className="w-full px-3 py-2.5 rounded-md bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent transition-all shadow-sm"
+              />
+            </div>
 
-            <input
-              name="password"
-              type="password"
-              placeholder="Password"
-              required
-              className="w-full px-4 py-3 rounded-xl
-              bg-white/70 border border-gray-300/70
-              focus:ring-2 focus:ring-indigo-600 outline-none"
-            />
+            <div>
+              <label className="block text-sm font-medium text-text-main mb-1">Password</label>
+              <input
+                name="password"
+                type="password"
+                placeholder="Password"
+                required
+                className="w-full px-3 py-2.5 rounded-md bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent transition-all shadow-sm"
+              />
+            </div>
           </div>
 
           {/* Role */}
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">
+            <label className="block text-sm font-medium text-text-main mb-1">
               Account type
             </label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl
-              bg-white/70 border border-gray-300/70
-              focus:ring-2 focus:ring-indigo-600 outline-none"
+              className="w-full px-3 py-2.5 rounded-md bg-white border border-gray-300 text-text-main focus:outline-none focus:ring-2 focus:ring-brand-accent shadow-sm"
             >
               <option value="client">Client (Buyer / Renter)</option>
               <option value="seller">Property Owner</option>
@@ -233,32 +216,28 @@ export default function Signup() {
 
           {/* Seller documents */}
           {role === "seller" && (
-            <div
-              className="rounded-xl border border-indigo-200/60
-            bg-indigo-50/40 p-4 space-y-2"
-            >
-              <p className="text-xs font-medium text-indigo-700">
+            <div className="rounded-md border border-gray-200 bg-gray-50 p-4 space-y-2">
+              <p className="text-sm font-medium text-brand-primary">
                 Ownership Verification
               </p>
               <input
                 type="file"
                 onChange={(e) => setOwnershipProof(e.target.files[0])}
-                className="block w-full text-sm
-                file:mr-4 file:py-2 file:px-4
-                file:rounded-lg file:border-0
-                file:bg-indigo-600 file:text-white
-                hover:file:bg-indigo-700"
+                className="block w-full text-sm text-text-muted
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded-md file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-brand-primary file:text-white
+                  hover:file:bg-brand-secondary
+                  cursor-pointer"
               />
             </div>
           )}
 
           {/* Broker documents */}
           {role === "broker" && (
-            <div
-              className="rounded-xl border border-indigo-200/60
-            bg-indigo-50/40 p-4 space-y-3"
-            >
-              <p className="text-xs font-medium text-indigo-700">
+            <div className="rounded-md border border-gray-200 bg-gray-50 p-4 space-y-3">
+              <p className="text-sm font-medium text-brand-primary">
                 Broker Verification
               </p>
 
@@ -266,35 +245,33 @@ export default function Signup() {
                 placeholder="License Number"
                 value={licenseNumber}
                 onChange={(e) => setLicenseNumber(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl
-                bg-white/70 border border-gray-300/70
-                focus:ring-2 focus:ring-indigo-600 outline-none"
+                className="w-full px-3 py-2.5 rounded-md bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-accent"
               />
 
               <input
                 type="file"
                 onChange={(e) => setCertificate(e.target.files[0])}
-                className="block w-full text-sm
-                file:mr-4 file:py-2 file:px-4
-                file:rounded-lg file:border-0
-                file:bg-indigo-600 file:text-white
-                hover:file:bg-indigo-700"
+                className="block w-full text-sm text-text-muted
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded-md file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-brand-primary file:text-white
+                  hover:file:bg-brand-secondary
+                  cursor-pointer"
               />
             </div>
           )}
 
           {/* Phone */}
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">
+            <label className="block text-sm font-medium text-text-main mb-1">
               Phone number
             </label>
             <input
               placeholder="+91 XXXXX XXXXX"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl
-              bg-white/70 border border-gray-300/70
-              focus:ring-2 focus:ring-indigo-600 outline-none"
+              className="w-full px-3 py-2.5 rounded-md bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-accent transition-all shadow-sm"
             />
           </div>
 
@@ -303,11 +280,7 @@ export default function Signup() {
             <button
               type="button"
               onClick={handleSendOtp}
-              className="w-full py-3 rounded-xl
-              bg-gradient-to-r from-indigo-700 to-slate-900
-              text-white font-semibold
-              hover:from-indigo-800 hover:to-black
-              transition shadow-lg"
+              className="w-full py-2.5 rounded-md bg-brand-primary text-white font-semibold hover:bg-brand-secondary transition shadow-sm"
             >
               Send Verification Code
             </button>
@@ -319,16 +292,12 @@ export default function Signup() {
                 placeholder="Enter OTP"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl text-center tracking-widest
-                bg-white/70 border border-gray-300/70
-                focus:ring-2 focus:ring-indigo-600 outline-none"
+                className="w-full px-3 py-2.5 rounded-md bg-white border border-gray-300 text-center tracking-widest focus:outline-none focus:ring-2 focus:ring-brand-accent"
               />
               <button
                 type="button"
                 onClick={handleVerifyOtp}
-                className="w-full py-3 rounded-xl
-                bg-green-600 text-white font-semibold
-                hover:bg-green-700 transition"
+                className="w-full py-2.5 rounded-md bg-green-600 text-white font-semibold hover:bg-green-700 transition shadow-sm"
               >
                 Verify Phone
               </button>
@@ -339,21 +308,17 @@ export default function Signup() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-xl
-              bg-gradient-to-r from-indigo-700 to-slate-900
-              text-white font-semibold
-              hover:from-indigo-800 hover:to-black
-              transition shadow-lg"
+              className="w-full py-3 rounded-md bg-brand-primary text-white font-semibold hover:bg-brand-secondary transition shadow-md disabled:opacity-75"
             >
               {loading ? "Creating account..." : "Create Account"}
             </button>
           )}
 
-          <p className="text-sm text-center text-gray-600 pt-4">
+          <p className="text-sm text-center text-text-muted pt-4">
             Already have an account?{" "}
             <span
               onClick={() => navigate("/login")}
-              className="text-indigo-700 font-medium cursor-pointer hover:underline"
+              className="text-brand-accent font-medium cursor-pointer hover:underline"
             >
               Login
             </span>

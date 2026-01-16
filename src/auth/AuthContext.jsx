@@ -37,20 +37,27 @@ export function AuthProvider({ children }) {
 
 //   loadUser();
 // }, []);
-useEffect(() => {
-  const loadUser = async () => {
-    try {
-      const res = await getProfile();
-      setUser(res.data);
-    } catch {
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const res = await getProfile();
+        setUser(res.data);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  loadUser();
-}, []);
+    loadUser();
+  }, []);
+
+  // ✅ Initialize Notifications on login
+  useEffect(() => {
+    if (user) {
+      setupNotifications({ onUnreadIncrement: loadUnread });
+    }
+  }, [user]);
 
 
 

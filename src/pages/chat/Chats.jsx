@@ -240,15 +240,15 @@ export default function Chats() {
      UI
   -------------------------------- */
   return (
-    <div className="h-screen grid grid-cols-1 md:grid-cols-[320px_1fr] bg-slate-100">
+    <div className="h-screen grid grid-cols-1 md:grid-cols-[320px_1fr] bg-bg-page">
       {/* ================= LEFT PANEL ================= */}
-      <aside className="bg-white border-r flex flex-col">
+      <aside className="bg-white border-r border-gray-200 flex flex-col items-stretch">
         {/* Header */}
-        <div className="px-5 py-4 border-b">
-          <h2 className="text-lg font-semibold text-gray-900">
+        <div className="px-5 py-4 border-b border-gray-100">
+          <h2 className="text-lg font-bold text-brand-primary">
             My Chats
           </h2>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-xs text-text-muted mt-0.5">
             Conversations with clients & brokers
           </p>
         </div>
@@ -257,7 +257,7 @@ export default function Chats() {
         <div className="flex-1 overflow-y-auto px-3 py-4 space-y-2">
           {interests.length === 0 && (
             <p className="text-sm text-gray-400 text-center mt-10">
-              No chats yet
+              No chats yet. Start browsing properties!
             </p>
           )}
 
@@ -268,25 +268,25 @@ export default function Chats() {
               <div
                 key={i.id}
                 onClick={() => handleSelectChat(i)}
-                className={`p-3 rounded-xl cursor-pointer transition border ${
+                className={`p-3 rounded-md cursor-pointer transition border border-transparent ${
                   active
-                    ? "bg-indigo-50 border-indigo-400"
-                    : "hover:bg-slate-50 border-transparent"
+                    ? "bg-blue-50 border-blue-100"
+                    : "hover:bg-gray-50 hover:border-gray-100"
                 }`}
               >
                 <div className="flex justify-between items-start">
-                  <p className="text-sm font-medium text-gray-900 line-clamp-1">
+                  <p className={`text-sm line-clamp-1 ${active ? "font-bold text-brand-primary" : "font-medium text-text-main"}`}>
                     {i.property}
                   </p>
 
                   {i.unread_count > 0 && (
-                    <span className="ml-2 min-w-[22px] h-[22px] text-xs bg-red-600 text-white rounded-full flex items-center justify-center">
+                    <span className="ml-2 min-w-[20px] h-[20px] text-[10px] font-bold bg-brand-accent text-white rounded-full flex items-center justify-center">
                       {i.unread_count}
                     </span>
                   )}
                 </div>
 
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-text-muted mt-1 truncate">
                   Click to open chat
                 </p>
               </div>
@@ -298,9 +298,9 @@ export default function Chats() {
       {/* ================= RIGHT PANEL ================= */}
       <main className="flex flex-col relative bg-white">
         {!selectedInterest && (
-          <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
-            <div className="text-4xl mb-3">💬</div>
-            <p className="text-sm">
+          <div className="flex-1 flex flex-col items-center justify-center text-gray-300">
+            <div className="text-5xl mb-4 text-gray-200">💬</div>
+            <p className="text-sm font-medium">
               Select a conversation to start chatting
             </p>
           </div>
@@ -309,22 +309,22 @@ export default function Chats() {
         {selectedInterest && (
           <>
             {/* HEADER */}
-            <div className="flex items-center justify-between px-6 py-4 border-b bg-white sticky top-0 z-10">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-10 shadow-sm">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900">
+                <h3 className="text-sm font-bold text-brand-primary">
                   {selectedInterest.property}
                 </h3>
-                <div className="flex items-center gap-2 text-xs text-green-600 mt-0.5">
-                  <span className="w-2 h-2 bg-green-500 rounded-full" />
-                  Live chat
+                <div className="flex items-center gap-2 text-xs text-green-600 mt-0.5 font-medium">
+                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                  Live Chat
                 </div>
               </div>
 
               <button
                 onClick={() => setShowVideo(true)}
-                className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition shadow"
+                className="flex items-center gap-2 bg-white border border-gray-300 text-brand-primary px-4 py-2 rounded-md text-sm font-semibold hover:bg-gray-50 transition shadow-sm"
               >
-                📹 Video Call
+                <span className="text-lg">📹</span> Video Call
               </button>
             </div>
 

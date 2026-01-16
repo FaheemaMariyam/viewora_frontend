@@ -237,8 +237,8 @@ export default function PropertyDetails() {
   if (!property) return <p className="p-6 text-red-600">Property not found</p>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-12 px-4">
-      <div className="max-w-6xl mx-auto bg-white/95 rounded-2xl shadow-2xl overflow-hidden">
+    <div className="min-h-screen bg-bg-page py-12 px-4">
+      <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 
         {/* IMAGE GALLERY */}
         <div className="p-6 border-b">

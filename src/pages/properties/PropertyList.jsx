@@ -75,16 +75,16 @@ useEffect(() => {
   };
 
   return (
-    <div className="min-h-screen px-4 sm:px-8 py-12 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-800">
+    <div className="min-h-screen px-4 sm:px-8 py-12 bg-bg-page">
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-semibold text-white">
+          <h1 className="text-2xl sm:text-3xl font-bold text-brand-primary">
             Available Properties
           </h1>
-          <p className="text-sm text-white/60 mt-1">
-            Start typing to search instantly
+          <p className="text-sm text-text-muted mt-1">
+            Browse through our exclusive list of verified properties
           </p>
         </div>
 
@@ -97,7 +97,9 @@ useEffect(() => {
 
         {/* Results */}
         {loading ? (
-          <p className="text-white/60 mt-6">Searching…</p>
+          <div className="flex justify-center items-center py-12">
+             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary"></div>
+          </div>
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

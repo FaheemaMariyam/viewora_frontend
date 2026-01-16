@@ -1,10 +1,11 @@
-
-import { useState,useContext } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../api/authApi";
 import { AuthContext } from "../auth/AuthContext";
-import { GoogleLogin } from "@react-oauth/google"; 
+import { GoogleLogin } from "@react-oauth/google";
 import { googleLogin } from "../api/authApi";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
 
 export default function Login() {
   const { loginUser } = useContext(AuthContext);
@@ -13,167 +14,121 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setLoading(true);
-//     setError("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-//     try {
-//       await login({
-//         username: e.target.username.value,
-//         password: e.target.password.value,
-//       });
-
-//       await loginUser();
-//       const res = await login(data);
-
-// if (res.data.otp_required && res.data.role === "broker") {
-//   navigate("/broker-otp");
-//   return;
-// }
-// axios.post("/api/auth/broker/verify-otp/", {
-//   username,
-//   otp
-// });
-
-
-//       navigate("/profile");
-//     } catch (err) {
-//       setError("Login failed");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError("");
-
-  try {
-    const res = await login({
-      username: e.target.username.value,
-      password: e.target.password.value,
-    });
-
-    // 🔐 Broker OTP flow
-    if (res.data?.otp_required && res.data.role === "broker") {
-      navigate("/broker-otp", {
-        state: { username: e.target.username.value },
+    try {
+      const res = await login({
+        username: e.target.username.value,
+        password: e.target.password.value,
       });
-      return;
+
+      // 🔐 Broker OTP flow
+      if (res.data?.otp_required && res.data.role === "broker") {
+        navigate("/broker-otp", {
+          state: { username: e.target.username.value },
+        });
+        return;
+      }
+
+      // ✅ Normal login
+      await loginUser();
+      navigate("/profile");
+
+    } catch {
+      setError("Login failed. Please check your credentials.");
+    } finally {
+      setLoading(false);
     }
-
-    // ✅ Normal login
-    await loginUser();
-    navigate("/profile");
-
-  } catch {
-    setError("Login failed");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center 
-      bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-800 relative overflow-hidden">
-
-      <div className="absolute -top-32 -left-32 w-[400px] h-[400px] bg-indigo-600/20 blur-3xl rounded-full" />
-      <div className="absolute -bottom-32 -right-32 w-[400px] h-[400px] bg-slate-600/20 blur-3xl rounded-full" />
-
-      <div className="relative w-full max-w-md
-        bg-gradient-to-b from-white/90 to-white/80
-        backdrop-blur-xl
-        border border-white/20
-        rounded-2xl
-        shadow-[0_20px_60px_rgba(0,0,0,0.25)]
-        p-8">
-
-        <div className="relative">
-          <h2 className="text-2xl font-semibold text-gray-900 text-center mb-2">
+    <div className="min-h-screen flex items-center justify-center bg-bg-page px-4">
+      
+      <div className="w-full max-w-md bg-white border border-gray-200 rounded-lg shadow-lg p-8">
+        
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-brand-primary mb-2">
             Welcome back
           </h2>
-
-          <p className="text-sm text-gray-600 text-center mb-6">
-            Sign in to continue to Viewora
+          <p className="text-sm text-text-muted">
+            Sign in to access your property dashboard
           </p>
+        </div>
 
-          {error && (
-            <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-100 px-4 py-2 rounded-md text-center">
-              {error}
-            </div>
-          )}
+        {error && (
+          <div className="mb-6 text-sm text-red-600 bg-red-50 border border-red-100 px-4 py-3 rounded text-center">
+            {error}
+          </div>
+        )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              name="username"
-              placeholder="Username"
-              required
-              className="w-full px-4 py-3 rounded-lg
-              bg-white/70
-              border border-gray-300/70
-              focus:ring-2 focus:ring-indigo-600
-              outline-none"
-            />
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <Input
+            name="username"
+            label="Username"
+            placeholder="Enter your username"
+            required
+          />
 
-            <input
-              name="password"
-              type="password"
-              placeholder="Password"
-              required
-              className="w-full px-4 py-3 rounded-lg
-              bg-white/70
-              border border-gray-300/70
-              focus:ring-2 focus:ring-indigo-600
-              outline-none"
-            />
+          <Input
+            name="password"
+            label="Password"
+            type="password"
+            placeholder="Enter your password"
+            required
+          />
 
-            <button
+          <div className="pt-2">
+            <Button 
+              type="submit" 
+              variant="primary" 
+              className="w-full justify-center"
               disabled={loading}
-              className="w-full py-3 rounded-lg
-              bg-gradient-to-r from-indigo-700 to-slate-900
-              text-white font-semibold
-              hover:from-indigo-800 hover:to-black
-              transition shadow-lg"
             >
-              {loading ? "Logging in..." : "Log In"}
+              {loading ? "Signing in..." : "Sign In"}
+            </Button>
+          </div>
+
+          <div className="flex justify-between items-center text-sm pt-2">
+            <button
+              type="button"
+              onClick={() => navigate("/signup")}
+              className="text-brand-accent hover:underline font-medium"
+            >
+              Create Account
             </button>
-
-            <p className="text-sm text-center text-gray-600 pt-3">
-              Don’t have an account?{" "}
-              <span
-                onClick={() => navigate("/signup")}
-                className="text-indigo-700 font-medium cursor-pointer hover:underline"
-              >
-                Create account
-              </span>
-            </p>
-
             <button
               type="button"
               onClick={() => navigate("/forgot-password")}
-              className="text-sm text-indigo-600"
+              className="text-text-muted hover:text-brand-primary"
             >
-              Forgot password?
+              Forgot Password?
             </button>
-          </form>
-          <div className="mt-4 flex justify-center">
-  <GoogleLogin
-    onSuccess={async (res) => {
-      try {
-        await googleLogin(res.credential);
-        await loginUser();
-        navigate("/profile");
-      } catch {
-        setError("Google login failed");
-      }
-    }}
-    onError={() => setError("Google login failed")}
-  />
-</div>
+          </div>
+        </form>
 
+        <div className="mt-6 pt-6 border-t border-gray-100 flex justify-center">
+          <GoogleLogin
+            theme="outline"
+            size="large"
+            width="100%"
+            text="continue_with"
+            onSuccess={async (res) => {
+              try {
+                await googleLogin(res.credential);
+                await loginUser();
+                navigate("/profile");
+              } catch {
+                setError("Google login failed");
+              }
+            }}
+            onError={() => setError("Google login failed")}
+          />
         </div>
+
       </div>
     </div>
   );

@@ -61,24 +61,24 @@ export default function AddProperty() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-12 px-6">
+    <div className="min-h-screen bg-bg-page py-12 px-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-white tracking-tight">
+          <h1 className="text-3xl font-bold text-brand-primary tracking-tight">
             Add New Property
           </h1>
-          <p className="text-slate-400 mt-2">
+          <p className="text-text-muted mt-2">
             Provide accurate details to attract genuine buyers
           </p>
         </div>
 
         {/* Card */}
-        <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-8">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Basic Info */}
             <div>
-              <h2 className="text-lg font-semibold text-slate-800 mb-4">
+              <h2 className="text-lg font-bold text-brand-primary mb-4 pb-2 border-b border-gray-100">
                 Property Information
               </h2>
 
@@ -87,7 +87,7 @@ export default function AddProperty() {
                   <label className="label">Title</label>
                   <input
                     name="title"
-                    placeholder="Luxury 3BHK Villa"
+                    placeholder="e.g. Luxury 3BHK Villa"
                     onChange={handleChange}
                     className="input"
                   />
@@ -99,6 +99,7 @@ export default function AddProperty() {
                     name="property_type"
                     onChange={handleChange}
                     className="input"
+                    value={form.property_type}
                   >
                     <option value="house">House</option>
                     <option value="flat">Flat</option>
@@ -108,11 +109,11 @@ export default function AddProperty() {
                 </div>
 
                 <div>
-                  <label className="label">Price</label>
+                  <label className="label">Price (₹)</label>
                   <input
                     type="number"
                     name="price"
-                    placeholder="₹ 85,00,000"
+                    placeholder="e.g. 8500000"
                     onChange={handleChange}
                     className="input"
                   />
@@ -122,7 +123,7 @@ export default function AddProperty() {
                   <label className="label">Area Size</label>
                   <input
                     name="area_size"
-                    placeholder="1800 sqft"
+                    placeholder="e.g. 1800"
                     onChange={handleChange}
                     className="input"
                   />
@@ -132,7 +133,7 @@ export default function AddProperty() {
                   <label className="label">City</label>
                   <input
                     name="city"
-                    placeholder="Bangalore"
+                    placeholder="e.g. Bangalore"
                     onChange={handleChange}
                     className="input"
                   />
@@ -142,7 +143,7 @@ export default function AddProperty() {
                   <label className="label">Locality</label>
                   <input
                     name="locality"
-                    placeholder="Whitefield"
+                    placeholder="e.g. Whitefield"
                     onChange={handleChange}
                     className="input"
                   />
@@ -177,17 +178,24 @@ export default function AddProperty() {
             {/* Images */}
             <div>
               <label className="label">Property Images</label>
-              <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-indigo-500 transition">
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-brand-accent hover:bg-blue-50 transition cursor-pointer relative">
                 <input
                   type="file"
                   multiple
                   accept="image/*"
                   onChange={handleImageChange}
-                  className="w-full cursor-pointer"
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-                <p className="text-sm text-slate-500 mt-2">
-                  Upload high-quality images (multiple allowed)
-                </p>
+                <div className="flex flex-col items-center">
+                  <span className="text-4xl text-gray-400 mb-2">📷</span>
+                  <p className="font-medium text-brand-primary">Click to upload images</p>
+                  <p className="text-sm text-text-muted mt-1">
+                    Upload high-quality images (JPEG, PNG)
+                  </p>
+                  {images.length > 0 && (
+                     <p className="mt-2 text-sm text-green-600 font-semibold">{images.length} files selected</p>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -196,10 +204,9 @@ export default function AddProperty() {
               <button
                 disabled={loading}
                 className="
-                  bg-gradient-to-r from-indigo-600 to-purple-600
-                  hover:from-indigo-700 hover:to-purple-700
-                  text-white font-semibold px-8 py-3 rounded-xl
-                  shadow-lg disabled:opacity-60 disabled:cursor-not-allowed
+                  bg-brand-primary text-white font-bold px-8 py-3 rounded-md
+                  hover:bg-brand-secondary
+                  shadow-sm disabled:opacity-60 disabled:cursor-not-allowed
                   transition-all
                 "
               >
@@ -214,12 +221,12 @@ export default function AddProperty() {
       <style>
         {`
           .label {
-            @apply block text-sm font-medium text-slate-700 mb-1;
+            @apply block text-sm font-semibold text-text-main mb-1.5;
           }
           .input {
-            @apply w-full rounded-lg border border-slate-300 px-4 py-2
-            focus:outline-none focus:ring-2 focus:ring-indigo-500
-            focus:border-indigo-500 bg-white;
+            @apply w-full rounded-md border border-gray-300 px-4 py-2.5
+            focus:outline-none focus:ring-2 focus:ring-brand-accent
+            focus:border-transparent bg-white text-sm text-text-main placeholder-gray-400 transition-shadow;
           }
         `}
       </style>

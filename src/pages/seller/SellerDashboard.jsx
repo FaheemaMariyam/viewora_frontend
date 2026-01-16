@@ -52,15 +52,15 @@ export default function SellerDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-6 py-10">
+    <div className="min-h-screen bg-bg-page px-6 py-10">
       <div className="max-w-7xl mx-auto">
         {/* HEADER */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
           <div>
-            <h1 className="text-3xl font-semibold text-white">
+            <h1 className="text-3xl font-bold text-brand-primary">
               Seller Dashboard
             </h1>
-            <p className="text-slate-400 mt-1">
+            <p className="text-text-muted mt-1">
               Manage and track your property listings
             </p>
           </div>
@@ -68,11 +68,10 @@ export default function SellerDashboard() {
           <button
             onClick={() => navigate("/seller/add-property")}
             className="
-              px-6 py-3 rounded-xl
-              bg-gradient-to-r from-indigo-600 to-purple-600
-              text-white font-semibold
-              hover:from-indigo-700 hover:to-purple-700
-              shadow-lg transition
+              px-6 py-3 rounded-md
+              bg-brand-accent text-white font-semibold
+              hover:bg-blue-600
+              shadow-sm transition
             "
           >
             + Add Property
@@ -80,27 +79,27 @@ export default function SellerDashboard() {
         </div>
 
         {/* CONTENT CARD */}
-        <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                  <button
   onClick={async () => {
     const permission = await Notification.requestPermission();
     console.log("Permission:", permission);
   }}
-  className="px-4 py-2 bg-indigo-600 text-white rounded-lg"
+  className="px-4 py-2 bg-white border border-gray-300 text-text-main rounded-md hover:bg-gray-50 mb-4 text-sm"
 >
   Enable Notifications
 </button>
           {properties.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-slate-500 mb-4">
+              <p className="text-text-muted mb-4">
                 You haven’t listed any properties yet.
               </p>
               <button
                 onClick={() => navigate("/seller/add-property")}
                 className="
-                  px-6 py-3 rounded-lg
-                  bg-indigo-600 text-white
-                  hover:bg-indigo-700 transition
+                  px-6 py-3 rounded-md
+                  bg-brand-accent text-white font-medium
+                  hover:bg-blue-600 transition
                 "
               >
                 Create Your First Property

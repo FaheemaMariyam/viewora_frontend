@@ -22,119 +22,91 @@ export default function Profile() {
   if (!user) return null;
 
   return (
-    <div
-      className="
-        min-h-screen flex items-center justify-center px-4
-        bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-800
-        relative overflow-hidden
-      "
-    >
-      {/* 🌈 Ambient glows (FIXED: cannot block clicks anymore) */}
-      <div className="pointer-events-none absolute -top-40 -left-40 w-[500px] h-[500px] bg-indigo-600/20 blur-3xl rounded-full" />
-      <div className="pointer-events-none absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-slate-600/20 blur-3xl rounded-full" />
-
-      {/* 💳 Card (raised above glows) */}
-      <div
-        className="
-          relative z-10 w-full max-w-xl
-          bg-white/90 backdrop-blur-xl
-          border border-white/20
-          rounded-3xl
-          shadow-[0_30px_80px_rgba(0,0,0,0.35)]
-          p-8
-        "
-      >
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-semibold text-gray-900">
-            Account Overview
-          </h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Manage your account & security
-          </p>
-        </div>
-
-        {/* Info */}
-        <div className="space-y-5 text-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-gray-500">Role</span>
-            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 capitalize">
-              {user.role}
-            </span>
+    <div className="min-h-screen bg-bg-page py-12 px-4">
+      <div className="max-w-3xl mx-auto">
+        
+        {/* Profile Header Card */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mb-6">
+          <div className="bg-brand-primary h-32 relative">
+             {/* Cover Pattern or Color */}
+             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]"></div>
           </div>
-
-          <div className="flex items-center justify-between">
-            <span className="text-gray-500">Profile Status</span>
-            <span
-              className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                user.is_profile_complete
-                  ? "bg-green-100 text-green-700"
-                  : "bg-orange-100 text-orange-700"
-              }`}
-            >
-              {user.is_profile_complete ? "Complete" : "Incomplete"}
-            </span>
-          </div>
-
-          {user.role !== "client" && (
-            <div className="flex items-center justify-between">
-              <span className="text-gray-500">Admin Approval</span>
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                  user.is_admin_approved
-                    ? "bg-green-100 text-green-700"
-                    : "bg-orange-100 text-orange-700"
-                }`}
-              >
-                {user.is_admin_approved ? "Approved" : "Pending"}
+          <div className="px-8 pb-8">
+            <div className="relative flex justify-between items-end -mt-12 mb-6">
+              <div className="flex items-end space-x-5">
+                <div className="h-24 w-24 bg-white rounded-full p-1 shadow-md">
+                   <div className="h-full w-full bg-brand-secondary rounded-full flex items-center justify-center text-3xl font-bold text-white">
+                      {user.username?.[0]?.toUpperCase() || "U"}
+                   </div>
+                </div>
+                <div className="mb-1">
+                  <h2 className="text-2xl font-bold text-brand-primary">{user.username}</h2>
+                  <p className="text-sm text-text-muted">{user.email}</p>
+                </div>
+              </div>
+              
+              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-brand-accent border border-blue-100 capitalize">
+                {user.role}
               </span>
             </div>
-          )}
+
+            {/* Profile Status Badge */}
+            <div className="flex gap-3">
+              <div className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-medium border ${user.is_profile_complete ? "bg-green-50 text-green-700 border-green-100" : "bg-amber-50 text-amber-700 border-amber-100"}`}>
+                <span className={`w-2 h-2 rounded-full mr-2 ${user.is_profile_complete ? "bg-green-500" : "bg-amber-500"}`}></span>
+                {user.is_profile_complete ? "Profile Complete" : "Profile Incomplete"}
+              </div>
+
+              {user.role !== "client" && (
+                <div className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-medium border ${user.is_admin_approved ? "bg-green-50 text-green-700 border-green-100" : "bg-amber-50 text-amber-700 border-amber-100"}`}>
+                  <span className={`w-2 h-2 rounded-full mr-2 ${user.is_admin_approved ? "bg-green-500" : "bg-amber-500"}`}></span>
+                  {user.is_admin_approved ? "Verified" : "Pending Approval"}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {!user.is_profile_complete && (
-          <div className="mt-6 p-4 rounded-xl bg-orange-50 border border-orange-200 text-sm text-orange-700">
-            Complete your profile to unlock all platform features.
+          <div className="mb-6 p-4 rounded-md bg-amber-50 border border-amber-200 text-sm text-amber-800 flex items-start">
+            <span className="mr-2 text-lg">⚠️</span>
+            <div className="mt-0.5">
+              <p className="font-semibold">Action Required</p>
+              <p>Please complete your profile details to unlock full platform features, including messaging and property listings.</p>
+            </div>
           </div>
         )}
 
-        {/* Security */}
-        <div className="mt-10 pt-6 border-t border-gray-200/60 space-y-4">
-          <h3 className="text-sm font-semibold text-gray-700">
-            Account Security
+        {/* Account Actions */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-bold text-brand-primary mb-4 border-b border-gray-100 pb-2">
+            Account Management
           </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button
+              onClick={() => navigate("/change-password")}
+              className="flex items-center justify-between p-4 rounded-md border border-gray-200 hover:border-brand-accent hover:bg-blue-50 transition group"
+            >
+              <span className="font-medium text-text-main group-hover:text-brand-accent">Change Password</span>
+              <span className="text-gray-400 group-hover:text-brand-accent">→</span>
+            </button>
 
-          <button
-            onClick={() => navigate("/change-password")}
-            className="
-              w-full py-3 rounded-xl
-              bg-gradient-to-r from-indigo-700 to-slate-900
-              text-white text-sm font-semibold
-              hover:from-indigo-800 hover:to-black
-              transition shadow-lg
-            "
-          >
-            Change Password
-          </button>
-
-          {/* 🔔 WORKING Enable Notifications button */}
-          <button
-            onClick={() =>
-              setupNotifications({
-                onUnreadIncrement: () =>
-                  setTotalUnread((prev) => prev + 1),
-              })
-            }
-            className="
-              w-full py-3 rounded-xl
-              bg-indigo-600 text-white text-sm font-semibold
-              hover:bg-indigo-700
-              transition shadow-md
-            "
-          >
-            Enable Notifications
-          </button>
+            <button
+              onClick={() =>
+                setupNotifications({
+                  onUnreadIncrement: () =>
+                    setTotalUnread((prev) => prev + 1),
+                })
+              }
+              className="flex items-center justify-between p-4 rounded-md border border-gray-200 hover:border-brand-accent hover:bg-blue-50 transition group"
+            >
+              <span className="font-medium text-text-main group-hover:text-brand-accent">Enable Notifications</span>
+              <span className="text-gray-400 group-hover:text-brand-accent">🔔</span>
+            </button>
+          </div>
         </div>
+
       </div>
     </div>
   );
