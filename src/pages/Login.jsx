@@ -25,13 +25,27 @@ export default function Login() {
         password: e.target.password.value,
       });
 
-      // 🔐 Broker OTP flow
-      if (res.data?.otp_required && res.data.role === "broker") {
-        navigate("/broker-otp", {
-          state: { username: e.target.username.value },
-        });
-        return;
-      }
+      // // 🔐 Broker OTP flow
+      // if (res.data?.otp_required && res.data.role === "broker") {
+      //   navigate("/broker-otp", {
+      //     state: { username: e.target.username.value },
+      //   });
+      //   return;
+      // }
+      if (res.data?.mfa_required) {
+  navigate("/admin/otp", {
+    state: { username: e.target.username.value },
+  });
+  return;
+}
+
+// 🔐 Broker OTP flow
+if (res.data?.otp_required && res.data.role === "broker") {
+  navigate("/broker-otp", {
+    state: { username: e.target.username.value },
+  });
+  return;
+}
 
       // ✅ Normal login
       await loginUser();

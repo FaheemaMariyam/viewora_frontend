@@ -26,3 +26,22 @@ export const googleLogin = (credential) =>
   axiosInstance.post("/api/auth/google-login/", {
     token: credential,
   });
+//  Admin OTP verify
+export const verifyAdminOtp = (data) =>
+  axiosInstance.post("/api/auth/admin/verify-otp/", data);
+
+//  Admin user management
+export const fetchAdminUsers = (params) =>
+  axiosInstance.get("/api/auth/admin/users/", { params });
+
+export const toggleUserStatus = (userId) =>
+  axiosInstance.post(`/api/auth/admin/users/${userId}/toggle-status/`);
+
+export const fetchAdminStats = () => 
+  axiosInstance.get("/api/auth/admin/stats/");
+
+export const fetchAdminProperties = (params) =>
+  axiosInstance.get("/api/auth/admin/properties/", { params });
+
+export const togglePropertyStatus = (propertyId) =>
+  axiosInstance.post(`/api/auth/admin/properties/${propertyId}/toggle-status/`);

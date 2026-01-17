@@ -15,28 +15,7 @@ export function AuthProvider({ children }) {
 
 
 
-// useEffect(() => {
-//   const loadUser = async () => {
- 
-// if (
-//   ["/login", "/signup", "/broker-otp"].includes(window.location.pathname)
-// ) {
-//   setLoading(false);
-//   return;
-// }
 
-//     try {
-//       const res = await getProfile();
-//       setUser(res.data);
-//     } catch {
-//       setUser(null);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   loadUser();
-// }, []);
   useEffect(() => {
     const loadUser = async () => {
       try {
@@ -52,7 +31,7 @@ export function AuthProvider({ children }) {
     loadUser();
   }, []);
 
-  // ✅ Initialize Notifications on login
+  //  Initialize Notifications on login
   useEffect(() => {
     if (user) {
       setupNotifications({ onUnreadIncrement: loadUnread });

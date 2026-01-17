@@ -20,6 +20,11 @@ import SellerPropertyDetails from "./pages/seller/SellerPropertyDetails";
 import EditProperty from "./pages/seller/EditProperty";
 import Notifications from "./pages/Notifications";
 import BrokerOTP from "./pages/broker/BrokerOTP";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminProperties from "./pages/admin/AdminProperties";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminOTP from "./pages/admin/AdminOtp";
+import AdminRoute from "./auth/AdminRoute";
 const Router = () => (
   <Routes>
     <Route path="/" element={<Home />} />
@@ -108,7 +113,32 @@ const Router = () => (
   }
 />
 <Route path="/broker-otp" element={<BrokerOTP />} />
+<Route path="/admin/otp" element={<AdminOTP />} />
 
+<Route
+  path="/admin/dashboard"
+  element={
+    <AdminRoute>
+      <AdminDashboard />
+    </AdminRoute>
+  }
+/>
+<Route
+  path="/admin/properties"
+  element={
+    <AdminRoute>
+      <AdminProperties />
+    </AdminRoute>
+  }
+/>
+<Route
+  path="/admin/analytics"
+  element={
+    <AdminRoute>
+      <AdminAnalytics />
+    </AdminRoute>
+  }
+/>
   </Routes>
 );
 

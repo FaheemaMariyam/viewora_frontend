@@ -6,6 +6,7 @@ import PropertyFilters from "./PropertyFilters";
 import Pagination from "../../components/Pagination";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
+import AreaInsights from "../../components/ai/AreaInsights";
 
 export default function PropertyList() {
   const navigate = useNavigate();
@@ -87,7 +88,7 @@ useEffect(() => {
             Browse through our exclusive list of verified properties
           </p>
         </div>
-
+<AreaInsights /> 
         {/* Filters */}
         <PropertyFilters
           filters={filters}

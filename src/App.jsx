@@ -33,18 +33,23 @@
 // }
 
 // export default App
+import { useLocation } from "react-router-dom";
 import Router from "./router";
 import Navbar from "./components/Navbar";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import FloatingAIChat from "./components/ai/FloatingAIChat";
 
 export default function App() {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
   return (
     <>
-
-      <Navbar />
+      {!isAdminRoute && <Navbar />}
       <ToastContainer />
       <Router />
+      {!isAdminRoute && <FloatingAIChat />}
     </>
   );
 }
