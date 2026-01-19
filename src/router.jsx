@@ -25,6 +25,7 @@ import AdminProperties from "./pages/admin/AdminProperties";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminOTP from "./pages/admin/AdminOtp";
 import AdminRoute from "./auth/AdminRoute";
+import AIChatPage from "./pages/ai/AIChatPage";
 const Router = () => (
   <Routes>
     <Route path="/" element={<Home />} />
@@ -56,6 +57,14 @@ const Router = () => (
     <Route path="/pending-approval" element={<PendingApproval />} />
     <Route path="/properties" element={<PropertyList />} />
     <Route path="/properties/:id" element={<PropertyDetail />} />
+    <Route
+      path="/ai-advisor"
+      element={
+        <RoleBasedRoute role="client">
+          <AIChatPage />
+        </RoleBasedRoute>
+      }
+    />
   <Route
   path="/broker"
   element={

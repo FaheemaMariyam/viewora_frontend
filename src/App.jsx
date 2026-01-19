@@ -33,7 +33,9 @@
 // }
 
 // export default App
+import { useContext } from "react";
 import { useLocation } from "react-router-dom";
+import { AuthContext } from "./auth/AuthContext";
 import Router from "./router";
 import Navbar from "./components/Navbar";
 import { ToastContainer } from "react-toastify";
@@ -41,15 +43,16 @@ import "react-toastify/dist/ReactToastify.css";
 import FloatingAIChat from "./components/ai/FloatingAIChat";
 
 export default function App() {
-  const location = useLocation();
+  const { user } = useContext(AuthContext);
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const isClient = user?.role === "client";
 
   return (
     <>
       {!isAdminRoute && <Navbar />}
       <ToastContainer />
       <Router />
-      {!isAdminRoute && <FloatingAIChat />}
+      {!isAdminRoute && isClient && <FloatingAIChat />}
     </>
   );
 }

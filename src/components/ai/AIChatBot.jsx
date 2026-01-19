@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useContext } from "react";
+import { useState, useRef, useEffect, useContext, forwardRef, useImperativeHandle } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../auth/AuthContext";
 import { getAreaInsights } from "../../api/aiApi";
@@ -11,7 +11,7 @@ const SUGGESTED_QUESTIONS = [
   "Upcoming development near Kanjikode?"
 ];
 
-export default function AIChatBot() {
+const AIChatBot = forwardRef((props, ref) => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const storageKey = `viewora_ai_chat_${user?.id || 'guest'}`;
@@ -97,13 +97,22 @@ export default function AIChatBot() {
     localStorage.removeItem(storageKey);
   };
 
+  useImperativeHandle(ref, () => ({
+    clearChat
+  }));
+
   return (
     <div className="flex flex-col h-[600px] bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
       {/* Header */}
       <div className="bg-gradient-to-r from-brand-primary to-blue-900 p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
-            <span className="text-xl">🤖</span>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white">
+              <rect x="5" y="10" width="14" height="9" rx="3" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+              <path d="M9 14H9.01M15 14H15.01" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M12 10V8M12 8C12 8 12 6 10 6M12 8C12 8 12 6 14 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 13V15M22 13V15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </div>
           <div>
             <h2 className="text-white font-semibold leading-tight">Viewora AI</h2>
@@ -254,4 +263,6 @@ export default function AIChatBot() {
       </div>
     </div>
   );
-}
+});
+
+export default AIChatBot;

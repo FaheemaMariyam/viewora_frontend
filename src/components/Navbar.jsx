@@ -71,6 +71,16 @@ export default function Navbar() {
               >
                 Properties
               </button>
+
+              {user?.role === "client" && (
+                <button
+                  onClick={() => navigate("/ai-advisor")}
+                  className={isActive("/ai-advisor") ? "text-white font-semibold flex items-center gap-1.5" : "text-gray-300 hover:text-white transition flex items-center gap-1.5"}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                  Viewora AI
+                </button>
+              )}
               
               <button
                 onClick={() => navigate("/notifications")}
@@ -151,6 +161,12 @@ export default function Navbar() {
           {user && (
             <>
               <button onClick={() => { navigate("/properties"); setOpen(false); }} className="block w-full text-left py-2">Properties</button>
+              {user?.role === "client" && (
+                <button onClick={() => { navigate("/ai-advisor"); setOpen(false); }} className="block w-full text-left py-2 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-400"></span>
+                  Viewora AI
+                </button>
+              )}
               <button onClick={() => { navigate("/chats"); setOpen(false); }} className="block w-full text-left py-2">Chats</button>
               <button onClick={() => { navigate("/profile"); setOpen(false); }} className="block w-full text-left py-2">Profile</button>
               <button onClick={handleLogout} className="block w-full text-left py-2 text-red-300">Logout</button>
