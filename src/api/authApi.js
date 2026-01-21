@@ -45,3 +45,14 @@ export const fetchAdminProperties = (params) =>
 
 export const togglePropertyStatus = (propertyId) =>
   axiosInstance.post(`/api/auth/admin/properties/${propertyId}/toggle-status/`);
+// pending seller signup requests
+export const fetchPendingSellers = () =>
+  axiosInstance.get("/api/auth/admin/pending/sellers/");
+
+// Pending broker signup requests
+export const fetchPendingBrokers = () =>
+  axiosInstance.get("/api/auth/admin/pending/brokers/");
+
+// Approve / Reject seller or broker
+export const approveRejectUser = (userId, action) =>
+  axiosInstance.post(`/api/auth/admin/approve-reject/${userId}/`, { action });

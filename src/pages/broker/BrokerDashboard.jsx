@@ -11,6 +11,7 @@ import {
 
 import ChatBox from "../../components/ChatBox";
 import { startInterest } from "../../api/brokerApi";
+import { User as UserIcon } from "lucide-react";
 
 export default function BrokerDashboard() {
   const { user, loading } = useContext(AuthContext);
@@ -215,14 +216,23 @@ export default function BrokerDashboard() {
         
         {/* Sidebar Footer */}
         <div className="p-4 bg-gray-50 border-t border-gray-100">
-           <div className="flex items-center gap-3">
-             <div className="w-8 h-8 rounded-full bg-brand-primary text-white flex items-center justify-center text-xs font-bold">
-               {user?.username?.charAt(0).toUpperCase()}
+           <div className="flex items-center justify-between">
+             <div className="flex items-center gap-3">
+               <div className="w-8 h-8 rounded-full bg-brand-primary text-white flex items-center justify-center text-xs font-bold">
+                 {user?.username?.charAt(0).toUpperCase()}
+               </div>
+               <div className="text-xs">
+                 <p className="font-semibold text-brand-primary line-clamp-1">{user?.username}</p>
+                 <p className="text-green-600 font-medium tracking-tight">● Online</p>
+               </div>
              </div>
-             <div className="text-xs">
-               <p className="font-semibold text-brand-primary">Logged in as {user?.username}</p>
-               <p className="text-green-600 font-medium">● Online</p>
-             </div>
+             <button 
+               onClick={() => navigate("/profile")}
+               className="p-2 rounded-lg hover:bg-white hover:shadow-sm text-brand-primary transition-all group"
+               title="View Profile"
+             >
+               <UserIcon size={18} className="group-hover:scale-110 transition-transform" />
+             </button>
            </div>
         </div>
       </div>

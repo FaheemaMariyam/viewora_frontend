@@ -7,7 +7,7 @@ firebase.initializeApp({
   authDomain: "viewora-notification.firebaseapp.com",
   projectId: "viewora-notification",
   messagingSenderId: "439946140444",
-  appId: "1:439946140444:web:cb65939552469092338d9",
+  appId: "1:439946140444:web:cb659395952469092338d9",
 });
 
 const messaging = firebase.messaging();

@@ -40,7 +40,7 @@ export default function ChatBox({ interestId, onSocketReady }) {
      WEBSOCKET
   -------------------------------- */
   useEffect(() => {
-    if (!interestId) return;
+    if (!interestId || !user) return;
     let socket;
 
     const connect = () => {

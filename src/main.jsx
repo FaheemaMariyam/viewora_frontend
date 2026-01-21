@@ -20,7 +20,10 @@ import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./auth/AuthContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-console.log("GOOGLE CLIENT ID:", import.meta.env.VITE_GOOGLE_CLIENT_ID);
+console.log("🔍 DIAGNOSTICS:");
+console.log("- Google Client ID:", import.meta.env.VITE_GOOGLE_CLIENT_ID);
+console.log("- Firebase Project ID:", import.meta.env.VITE_FIREBASE_PROJECT_ID);
+console.log("- Firebase API Key Initial:", import.meta.env.VITE_FIREBASE_API_KEY?.substring(0, 10) + "...");
 
 // 🔔 REGISTER FIREBASE SERVICE WORKER (REQUIRED)
 if ("serviceWorker" in navigator) {

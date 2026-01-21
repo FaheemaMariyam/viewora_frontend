@@ -26,6 +26,8 @@ import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminOTP from "./pages/admin/AdminOtp";
 import AdminRoute from "./auth/AdminRoute";
 import AIChatPage from "./pages/ai/AIChatPage";
+import AdminSellerRequests from "./pages/admin/AdminSellerRequests";
+import AdminBrokerRequests from "./pages/admin/AdminBrokerRequests";
 const Router = () => (
   <Routes>
     <Route path="/" element={<Home />} />
@@ -148,6 +150,24 @@ const Router = () => (
     </AdminRoute>
   }
 />
+<Route
+  path="/admin/requests/sellers"
+  element={
+    <AdminRoute>
+      <AdminSellerRequests />
+    </AdminRoute>
+  }
+/>
+
+<Route
+  path="/admin/requests/brokers"
+  element={
+    <AdminRoute>
+      <AdminBrokerRequests />
+    </AdminRoute>
+  }
+/>
+
   </Routes>
 );
 

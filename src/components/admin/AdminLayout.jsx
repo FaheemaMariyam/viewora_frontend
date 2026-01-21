@@ -2,6 +2,15 @@ import { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../auth/AuthContext";
 import { logout } from "../../api/authApi";
+import { 
+  Users, 
+  UserCheck, 
+  Briefcase, 
+  Building2, 
+  BarChart3, 
+  LogOut,
+  LayoutDashboard
+} from "lucide-react";
 
 export default function AdminLayout({ children }) {
   const { user, logoutUser } = useContext(AuthContext);
@@ -13,11 +22,29 @@ export default function AdminLayout({ children }) {
     navigate("/login");
   };
 
-  const navItems = [
-    { name: "Users", path: "/admin/dashboard", icon: "👥" },
-    { name: "Properties", path: "/admin/properties", icon: "🏠" },
-    { name: "Analytics", path: "/admin/analytics", icon: "📈" },
-  ];
+ const navItems = [
+  {
+    section: "MANAGEMENT",
+    items: [
+      { name: "Users", path: "/admin/dashboard", icon: <Users size={18} /> },
+    ],
+  },
+  {
+    section: "REQUESTS",
+    items: [
+      { name: "Seller Requests", path: "/admin/requests/sellers", icon: <UserCheck size={18} /> },
+      { name: "Broker Requests", path: "/admin/requests/brokers", icon: <Briefcase size={18} /> },
+    ],
+  },
+  {
+    section: "SYSTEM",
+    items: [
+      { name: "Properties", path: "/admin/properties", icon: <Building2 size={18} /> },
+      { name: "Analytics", path: "/admin/analytics", icon: <BarChart3 size={18} /> },
+    ],
+  },
+];
+
 
   return (
     <div className="flex h-screen bg-gray-50 border-t-4 border-brand-primary">
@@ -30,32 +57,45 @@ export default function AdminLayout({ children }) {
           </div>
         </div>
 
-        <nav className="flex-1 px-4 py-4 space-y-1">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.name}
-              to={item.path}
-              className={({ isActive }) =>
-                `flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                  isActive
-                    ? "bg-brand-primary text-white shadow-lg shadow-blue-900/40"
-                    : "text-slate-400 hover:bg-white/5 hover:text-white"
-                }`
-              }
-            >
-              <span className="text-xl">{item.icon}</span>
-              <span className="font-semibold">{item.name}</span>
-            </NavLink>
-          ))}
-        </nav>
+       <nav className="flex-1 px-4 py-4 space-y-6">
+  {navItems.map((group) => (
+    <div key={group.section}>
+      <p className="px-4 mb-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+        {group.section}
+      </p>
+
+      <div className="space-y-1">
+        {group.items.map((item) => (
+          <NavLink
+            key={item.name}
+            to={item.path}
+            className={({ isActive }) =>
+              `flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 ${
+                isActive
+                  ? "bg-brand-primary text-white shadow-lg shadow-blue-900/40"
+                  : "text-slate-400 hover:bg-white/5 hover:text-white"
+              }`
+            }
+          >
+            <div className="flex items-center space-x-3">
+              <span className="opacity-70 group-hover:opacity-100 transition-opacity">{item.icon}</span>
+              <span className="font-semibold text-sm">{item.name}</span>
+            </div>
+          </NavLink>
+        ))}
+      </div>
+    </div>
+  ))}
+</nav>
+
 
         <div className="p-4 border-t border-slate-800">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center space-x-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
+            className="w-full flex items-center space-x-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors group"
           >
-            <span className="text-xl">🚪</span>
-            <span className="font-semibold">Sign Out</span>
+            <LogOut size={18} className="group-hover:translate-x-1 transition-transform" />
+            <span className="font-semibold text-sm">Sign Out</span>
           </button>
         </div>
       </aside>

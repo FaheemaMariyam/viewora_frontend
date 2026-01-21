@@ -120,6 +120,10 @@ export async function setupNotifications({ onUnreadIncrement } = {}) {
       }
     });
   } catch (err) {
+    if (err.response?.status === 403) {
+      console.log("🔒 Notification setup skipped: Unauthenticated");
+      return;
+    }
     console.error("❌ Notification setup error:", err);
   }
 }

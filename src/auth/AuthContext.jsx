@@ -21,7 +21,8 @@ export function AuthProvider({ children }) {
       try {
         const res = await getProfile();
         setUser(res.data);
-      } catch {
+      } catch (err) {
+        console.warn("User not authenticated", err);
         setUser(null);
       } finally {
         setLoading(false);

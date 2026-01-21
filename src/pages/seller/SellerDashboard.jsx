@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMyProperties, toggleArchiveProperty } from "../../api/sellerApi";
 import SellerPropertyCard from "./SellerPropertycard";
+import { User, Plus } from "lucide-react";
 
 export default function SellerDashboard() {
   const navigate = useNavigate();
@@ -65,17 +66,27 @@ export default function SellerDashboard() {
             </p>
           </div>
 
-          <button
-            onClick={() => navigate("/seller/add-property")}
-            className="
-              px-6 py-3 rounded-md
-              bg-brand-accent text-white font-semibold
-              hover:bg-blue-600
-              shadow-sm transition
-            "
-          >
-            + Add Property
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate("/profile")}
+              className="px-4 py-3 rounded-md bg-white border border-gray-200 text-brand-primary font-semibold hover:bg-gray-50 shadow-sm transition flex items-center gap-2"
+            >
+              <User size={18} />
+              Profile
+            </button>
+            <button
+              onClick={() => navigate("/seller/add-property")}
+              className="
+                px-6 py-3 rounded-md
+                bg-brand-primary text-white font-semibold
+                hover:bg-brand-secondary
+                shadow-sm transition flex items-center gap-2
+              "
+            >
+              <Plus size={18} />
+              Add Property
+            </button>
+          </div>
         </div>
 
         {/* CONTENT CARD */}

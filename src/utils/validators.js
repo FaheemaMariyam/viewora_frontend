@@ -5,13 +5,13 @@ export const isValidEmail = (email) =>
 export const isValidPhone = (phone) => {
   const cleaned = phone.replace(/\s+/g, "");
 
-  // Accept +91XXXXXXXXXX
+  // Accept +91XXXXXXXXXX (relaxed for test numbers)
   if (cleaned.startsWith("+91")) {
-    return /^\+91[6-9]\d{9}$/.test(cleaned);
+    return /^\+91[1-9]\d{9}$/.test(cleaned);
   }
 
-  // Accept 10-digit Indian number (optional)
-  return /^[6-9]\d{9}$/.test(cleaned);
+  // Accept 10-digit Indian number (relaxed for test numbers)
+  return /^[1-9]\d{9}$/.test(cleaned);
 };
 
 export const isValidOTP = (otp) =>
