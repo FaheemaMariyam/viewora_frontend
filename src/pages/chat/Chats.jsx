@@ -1,172 +1,3 @@
-
-// import { useEffect, useRef, useState, useContext } from "react";
-// import { AuthContext } from "../../auth/AuthContext";
-// import ChatBox from "../../components/ChatBox";
-// import VideoCall from "../../components/VideoCall";
-// import axiosInstance from "../../utils/axiosInstance";
-
-// export default function Chats() {
-//   const { user, loading, setTotalUnread } = useContext(AuthContext);
-
-//   const [interests, setInterests] = useState([]);
-//   const [selectedInterest, setSelectedInterest] = useState(null);
-//   const [showVideo, setShowVideo] = useState(false);
-
-//   const socketRef = useRef(null);
-
-//   /* -------------------------------
-//      LOAD CHAT LIST (WITH POLLING)
-//   -------------------------------- */
-//   const loadInterests = async () => {
-//     if (!user) return;
-
-//     const url =
-//       user.role === "broker"
-//         ? "/api/interests/broker/interests/"
-//         : "/api/interests/client/interests/";
-
-//     const res = await axiosInstance.get(url);
-//     setInterests(res.data);
-
-//     // update navbar unread count
-//     const totalUnread = res.data.reduce(
-//       (sum, i) => sum + (i.unread_count || 0),
-//       0
-//     );
-//     setTotalUnread(totalUnread);
-//   };
-
-//   useEffect(() => {
-//     if (!user || loading) return;
-
-//     loadInterests(); // initial load
-
-//     const interval = setInterval(loadInterests, 5000); // 🔁 poll every 5s
-//     return () => clearInterval(interval);
-//   }, [user, loading]);
-
-//   /* -------------------------------
-//      SELECT CHAT
-//   -------------------------------- */
-//   const handleSelectChat = async (interest) => {
-//     setSelectedInterest(interest);
-
-//     if (interest.unread_count > 0) {
-//       await axiosInstance.post(
-//         `/api/chat/interest/${interest.id}/read/`
-//       );
-
-//       // update list immediately
-//       setInterests((prev) =>
-//         prev.map((i) =>
-//           i.id === interest.id
-//             ? { ...i, unread_count: 0 }
-//             : i
-//         )
-//       );
-
-//       setTotalUnread((prev) =>
-//         Math.max(prev - interest.unread_count, 0)
-//       );
-//     }
-//   };
-
-//   /* -------------------------------
-//      UI
-//   -------------------------------- */
-//   return (
-//     <div className="grid grid-cols-1 md:grid-cols-3 h-screen">
-//       {/* LEFT: CHAT LIST */}
-//       <div className="border-r p-4 overflow-y-auto">
-//         <h2 className="font-semibold mb-4">My Chats</h2>
-
-//         {interests.length === 0 && (
-//           <p className="text-sm text-gray-500">
-//             No chats yet
-//           </p>
-//         )}
-
-//         {interests.map((i) => (
-//           <div
-//             key={i.id}
-//             onClick={() => handleSelectChat(i)}
-//             className={`p-3 mb-2 rounded cursor-pointer ${
-//               selectedInterest?.id === i.id
-//                 ? "bg-indigo-50 border border-indigo-400"
-//                 : "hover:bg-slate-50"
-//             }`}
-//           >
-//             <p className="font-medium text-sm">
-//               {i.property}
-//             </p>
-
-//             {i.unread_count > 0 && (
-//               <span className="inline-block mt-1 text-xs bg-red-100 text-red-600 px-2 py-1 rounded">
-//                 {i.unread_count} unread
-//               </span>
-//             )}
-//           </div>
-//         ))}
-//       </div>
-
-//       {/* RIGHT: CHAT + VIDEO */}
-//       <div className="md:col-span-2 flex flex-col relative">
-//         {!selectedInterest && (
-//           <div className="flex-1 flex items-center justify-center text-gray-400">
-//             Select a chat to start
-//           </div>
-//         )}
-
-//         {selectedInterest && (
-//           <>
-//             {/* HEADER */}
-//             <div className="flex justify-between items-center p-3 bg-white border-b">
-//               <div>
-//                 <p className="font-semibold">
-//                   {selectedInterest.property}
-//                 </p>
-//                 <p className="text-xs text-gray-500">
-//                   Live chat
-//                 </p>
-//               </div>
-
-//               <button
-//                 onClick={() => setShowVideo(true)}
-//                 className="bg-indigo-600 text-white px-3 py-1 rounded text-sm"
-//               >
-//                 📹 Video Call
-//               </button>
-//             </div>
-
-//             {/* VIDEO CALL */}
-//             {showVideo && socketRef.current && (
-//               <div className="absolute top-12 left-0 right-0 z-20 px-4">
-//                 {/* <VideoCall
-//                   socket={socketRef.current}
-//                   onClose={() => setShowVideo(false)}
-//                 /> */}
-//                 <VideoCall
-//   socket={socketRef.current}
-//   currentUser={user.username}
-//   onClose={() => setShowVideo(false)}
-// />
-
-//               </div>
-//             )}
-
-//             {/* CHAT BOX */}
-//             <div className={`flex-1 ${showVideo ? "mt-[260px]" : ""}`}>
-//               <ChatBox
-//                 interestId={selectedInterest.id}
-//                 onSocketReady={(s) => (socketRef.current = s)}
-//               />
-//             </div>
-//           </>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
 import { useEffect, useRef, useState, useContext } from "react";
 import { AuthContext } from "../../auth/AuthContext";
 import ChatBox from "../../components/ChatBox";
@@ -242,23 +73,25 @@ export default function Chats() {
   return (
     <div className="h-screen grid grid-cols-1 md:grid-cols-[320px_1fr] bg-bg-page">
       {/* ================= LEFT PANEL ================= */}
-      <aside className="bg-white border-r border-gray-200 flex flex-col items-stretch">
+      <aside className="bg-white border-r border-gray-100 flex flex-col items-stretch shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-10">
         {/* Header */}
-        <div className="px-5 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-brand-primary">
-            My Chats
+        <div className="px-6 py-5 border-b border-gray-50 bg-white/50 backdrop-blur-sm sticky top-0 z-10">
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+            Messages
           </h2>
-          <p className="text-xs text-text-muted mt-0.5">
-            Conversations with clients & brokers
+          <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mt-1">
+            Your Negotiation Hub
           </p>
         </div>
 
         {/* Chat List */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-2">
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2 scrollbar-thin scrollbar-thumb-gray-100">
           {interests.length === 0 && (
-            <p className="text-sm text-gray-400 text-center mt-10">
-              No chats yet. Start browsing properties!
-            </p>
+            <div className="flex flex-col items-center justify-center pt-20 text-center px-6 opacity-60">
+               <div className="w-16 h-16 bg-gray-50 rounded-2xl mb-4 flex items-center justify-center text-3xl shadow-sm">📭</div>
+               <p className="text-sm font-medium text-gray-500">No active conversations</p>
+               <p className="text-xs text-gray-400 mt-1">Start inquiring on properties to see them here.</p>
+            </div>
           )}
 
           {interests.map((i) => {
@@ -268,27 +101,30 @@ export default function Chats() {
               <div
                 key={i.id}
                 onClick={() => handleSelectChat(i)}
-                className={`p-3 rounded-md cursor-pointer transition border border-transparent ${
+                className={`group relative p-4 rounded-xl cursor-pointer transition-all duration-300 border ${
                   active
-                    ? "bg-blue-50 border-blue-100"
-                    : "hover:bg-gray-50 hover:border-gray-100"
+                    ? "bg-white border-brand-primary/20 shadow-lg shadow-brand-primary/5 ring-1 ring-brand-primary/10"
+                    : "bg-transparent border-transparent hover:bg-gray-50 hover:border-gray-100"
                 }`}
               >
-                <div className="flex justify-between items-start">
-                  <p className={`text-sm line-clamp-1 ${active ? "font-bold text-brand-primary" : "font-medium text-text-main"}`}>
-                    {i.property}
-                  </p>
-
+                <div className="flex justify-between items-start gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className={`text-sm truncate transition-colors ${active ? "font-bold text-brand-primary" : "font-semibold text-gray-700 group-hover:text-gray-900"}`}>
+                      {i.property}
+                    </p>
+                    <p className="text-[10px] font-medium text-gray-400 mt-1 uppercase tracking-wider truncate">
+                       {i.broker_name ? <span className="text-brand-accent">Broker: {i.broker_name}</span> : "Property Asset"}
+                    </p>
+                  </div>
+                  
                   {i.unread_count > 0 && (
-                    <span className="ml-2 min-w-[20px] h-[20px] text-[10px] font-bold bg-brand-accent text-white rounded-full flex items-center justify-center">
+                    <span className="flex-shrink-0 min-w-[20px] h-[20px] text-[10px] font-bold bg-brand-accent text-white rounded-full flex items-center justify-center shadow-md shadow-brand-accent/20">
                       {i.unread_count}
                     </span>
                   )}
                 </div>
 
-                <p className="text-xs text-text-muted mt-1 truncate">
-                  Click to open chat
-                </p>
+                {active && <div className="absolute left-0 top-3 bottom-3 w-1 bg-brand-primary rounded-r-full" />}
               </div>
             );
           })}
@@ -309,22 +145,36 @@ export default function Chats() {
         {selectedInterest && (
           <>
             {/* HEADER */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-10 shadow-sm">
+            <div className="flex items-center justify-between px-8 py-5 border-b border-gray-100 bg-white/80 backdrop-blur-md sticky top-0 z-20 transition-all duration-300">
               <div>
-                <h3 className="text-sm font-bold text-brand-primary">
+                <h3 className="text-base font-bold text-gray-900 tracking-tight">
                   {selectedInterest.property}
                 </h3>
-                <div className="flex items-center gap-2 text-xs text-green-600 mt-0.5 font-medium">
-                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                  Live Chat
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">
+                    Live Channel
+                  </span>
+                  {selectedInterest.broker_name && (
+                     <>
+                        <span className="text-gray-300 mx-1">•</span>
+                        <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">
+                           Broker: {selectedInterest.broker_name}
+                        </span>
+                     </>
+                  )}
                 </div>
               </div>
 
               <button
                 onClick={() => setShowVideo(true)}
-                className="flex items-center gap-2 bg-white border border-gray-300 text-brand-primary px-4 py-2 rounded-md text-sm font-semibold hover:bg-gray-50 transition shadow-sm"
+                className="group flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-black hover:shadow-lg hover:shadow-black/20 transition-all active:scale-95"
               >
-                <span className="text-lg">📹</span> Video Call
+                <span className="text-base group-hover:scale-110 transition-transform duration-300">📹</span> 
+                <span>Video Call</span>
               </button>
             </div>
 

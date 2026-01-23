@@ -75,53 +75,70 @@ useEffect(() => {
   };
 
   return (
-    <div className="min-h-screen px-4 sm:px-8 py-12 bg-bg-page">
-      <div className="max-w-7xl mx-auto">
-
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-brand-primary">
-            Available Properties
+    <div className="min-h-screen pt-12 pb-24 px-4 bg-[#FDFDFD] font-sans selection:bg-brand-primary/10">
+      <div className="max-w-7xl mx-auto relative">
+        
+        {/* Header - Centered & Premium */}
+        <div className="text-center mb-16 space-y-3">
+          <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-[#1A1A1A]">
+            Discover Premium Assets
           </h1>
-          <p className="text-sm text-text-muted mt-1">
-            Browse through our exclusive list of verified properties
+          <p className="text-sm font-bold text-gray-400 uppercase tracking-[0.3em]">
+            Browse our exclusive collection of verified properties
           </p>
+          <div className="w-12 h-1 bg-brand-primary mx-auto rounded-full" />
         </div>
-        {/* Filters */}
-        <PropertyFilters
-          filters={filters}
-          setFilters={setFilters}
-          onApply={applyFilters}
-        />
+
+        {/* Filters - High Z-index for select dropdowns if needed */}
+        <div className="relative z-20">
+          <PropertyFilters
+            filters={filters}
+            setFilters={setFilters}
+            onApply={applyFilters}
+          />
+        </div>
 
         {/* Results */}
         {loading ? (
-          <div className="flex justify-center items-center py-12">
-             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary"></div>
+          <div className="flex flex-col items-center justify-center py-32 gap-6">
+             <div className="w-12 h-12 border-4 border-gray-100 border-t-brand-primary rounded-full animate-spin" />
+             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-300">Searching global assets...</p>
           </div>
         ) : (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {properties.map((property) => (
-                <PropertyCard
-                  key={property.id}
-                  property={property}
-                  onView={() =>
-                    navigate(`/properties/${property.id}`)
-                  }
-                />
-              ))}
+          <div className="space-y-16">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {properties.length > 0 ? (
+                properties.map((property) => (
+                  <PropertyCard
+                    key={property.id}
+                    property={property}
+                    onView={() =>
+                      navigate(`/properties/${property.id}`)
+                    }
+                  />
+                ))
+              ) : (
+                <div className="col-span-full py-32 text-center space-y-4">
+                   <h2 className="text-xl font-black text-gray-300">No properties found matching your criteria</h2>
+                   <button onClick={() => setFilters({search:"", city:"", property_type:"", min_price:"", max_price:""})} className="text-brand-primary font-bold hover:underline">Clear all filters</button>
+                </div>
+              )}
             </div>
 
-            <Pagination
-              page={page}
-              total={count}
-              onPage={(p) =>
-                setSearchParams({ ...filters, page: p })
-              }
-            />
-          </>
+            <div className="pt-12 border-t border-gray-50">
+              <Pagination
+                page={page}
+                total={count}
+                onPage={(p) =>
+                  setSearchParams({ ...filters, page: p })
+                }
+              />
+            </div>
+          </div>
         )}
+
+        {/* Background Accent */}
+        <div className="fixed top-[20%] right-[5%] w-[40%] h-[40%] bg-brand-primary/5 blur-[150px] rounded-full pointer-events-none -z-10" />
       </div>
     </div>
   );

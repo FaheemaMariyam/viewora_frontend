@@ -66,7 +66,7 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 } */
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 @import "tailwindcss";
 
@@ -82,8 +82,7 @@ button:focus-visible {
   --color-text-muted: #64748b; /* Slate 500 */
   --color-text-inverted: #ffffff;
 
-  --font-sans: "Inter", system-ui, sans-serif;
-  --font-serif: "Playfair Display", serif; /* Keep for headlines if needed, or remove */
+  --font-sans: "Plus Jakarta Sans", "Outfit", system-ui, sans-serif;
 }
 
 @layer base {
@@ -92,11 +91,12 @@ button:focus-visible {
     color: var(--color-text-main);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.011em;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-sans); /* Switch back to clean sans */
+    font-family: var(--font-sans);
     color: var(--color-brand-primary);
-    letter-spacing: -0.025em; /* Tight, modern tracking */
-    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-weight: 800;
   }
 }

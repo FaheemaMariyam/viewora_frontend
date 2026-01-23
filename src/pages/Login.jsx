@@ -41,7 +41,18 @@ export default function Login() {
       }
 
       await loginUser();
-      navigate("/profile");
+      
+      const role = res.data.role; // Assuming login response returns role, otherwise fetch user profile
+      
+      if (role === "seller") {
+        navigate("/seller");
+      } else if (role === "broker") {
+        navigate("/broker");
+      } else if (role === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
 
     } catch {
       setError("Invalid username or password");

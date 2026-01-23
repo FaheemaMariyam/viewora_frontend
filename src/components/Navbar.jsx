@@ -1,16 +1,16 @@
+
 import { useContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../auth/AuthContext";
 import { logout } from "../api/authApi";
-import axiosInstance from "../utils/axiosInstance";
-
-import { setupNotifications } from "../firebase/notification";
+import { 
+  Home, Building2, Sparkles, MessageSquare, 
+  Bell, User as UserIcon, LogOut, Menu, X,
+  ChevronDown, LayoutDashboard
+} from "lucide-react";
 
 export default function Navbar() {
-  // const { user, loading, logoutUser } = useContext(AuthContext);
-  const { user, loading, logoutUser, totalUnread, loadUnread } =
-    useContext(AuthContext);
-
+  const { user, loading, logoutUser, totalUnread, loadUnread } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -26,73 +26,93 @@ export default function Navbar() {
 
   const isActive = (path) => location.pathname.startsWith(path);
 
+  const navLinkClass = (path) => `
+    relative flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300
+    text-[10px] font-black uppercase tracking-[0.15em]
+    ${isActive(path) 
+      ? "text-white bg-white/10 shadow-inner" 
+      : "text-gray-400 hover:text-white hover:bg-white/5"}
+  `;
+
   return (
-    <nav className="sticky top-0 z-50 bg-brand-primary border-b border-gray-700 shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-3 flex justify-between items-center">
-        {/* Brand */}
+    <nav className="sticky top-0 z-50 bg-[#0F172A] border-b border-white/5 backdrop-blur-xl shadow-2xl">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        
+        {/* Brand Identity */}
         <div
           onClick={() => navigate("/")}
-          className="flex items-center space-x-3 cursor-pointer group"
+          className="flex items-center gap-4 cursor-pointer group"
         >
-          <div className="w-8 h-8 flex items-center justify-center bg-white text-brand-primary font-bold text-lg rounded-md shadow-sm">
+          <div className="w-10 h-10 flex items-center justify-center bg-white text-[#0F172A] font-black text-xl rounded-2xl shadow-[0_8px_20px_rgba(255,255,255,0.15)] group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
             V
           </div>
-
-          <span className="text-xl font-bold text-white tracking-tight">
-            Viewora
-          </span>
+          <div className="flex flex-col">
+            <span className="text-xl font-black text-white tracking-tighter leading-none group-hover:tracking-normal transition-all duration-500">
+              Viewora
+            </span>
+            <span className="text-[8px] font-black text-gray-500 uppercase tracking-[0.3em] leading-none mt-1">
+              Premium Assets
+            </span>
+          </div>
         </div>
 
-        {/* Desktop Actions */}
-        <div className="hidden md:flex items-center space-x-6 text-sm font-medium">
+        {/* Desktop Navigation */}
+        <div className="hidden lg:flex items-center space-x-2">
           {!user && (
             <>
               <button
                 onClick={() => navigate("/login")}
-                className="text-gray-300 hover:text-white transition"
+                className="px-6 py-2 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white transition-colors"
               >
-                Log In
+                Access Portal
               </button>
 
               <button
                 onClick={() => navigate("/signup")}
-                className="px-4 py-2 bg-white text-brand-primary font-semibold rounded-md hover:bg-gray-100 transition shadow-sm"
+                className="px-6 py-2.5 bg-white text-[#0F172A] text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-gray-100 transition shadow-[0_8px_20px_rgba(255,255,255,0.1)] active:scale-95"
               >
-                Sign Up
+                Join Network
               </button>
             </>
           )}
 
           {user && (
             <>
-              <button
-                onClick={() => navigate("/properties")}
-                className={isActive("/properties") ? "text-white font-semibold" : "text-gray-300 hover:text-white transition"}
-              >
+              <button onClick={() => navigate("/properties")} className={navLinkClass("/properties")}>
+                <Building2 size={14} className={isActive("/properties") ? "text-white" : "text-gray-500"} />
                 Properties
               </button>
 
-              {user?.role === "client" && (
-                <button
-                  onClick={() => navigate("/ai-advisor")}
-                  className={isActive("/ai-advisor") ? "text-white font-semibold flex items-center gap-1.5" : "text-gray-300 hover:text-white transition flex items-center gap-1.5"}
+              {(user?.role === "seller" || user?.role === "broker" || user?.role === "admin") && (
+                <button 
+                  onClick={() => {
+                    if (user.role === "seller") navigate("/seller");
+                    if (user.role === "broker") navigate("/broker");
+                    if (user.role === "admin") navigate("/admin/dashboard");
+                  }} 
+                  className={navLinkClass("/dashboard")} // Generic match for style
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                  <LayoutDashboard size={14} className="text-gray-500 hover:text-white" />
+                  Dashboard
+                </button>
+              )}
+
+              {user?.role === "client" && (
+                <button onClick={() => navigate("/ai-advisor")} className={navLinkClass("/ai-advisor")}>
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)] animate-pulse" />
                   Viewora AI
                 </button>
               )}
+
+              <div className="h-4 w-px bg-white/10 mx-2" />
               
               <button
                 onClick={() => navigate("/notifications")}
-                className="relative text-gray-300 hover:text-white transition"
+                className="p-2 relative text-gray-400 hover:text-white transition-all hover:bg-white/5 rounded-xl"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                </svg>
+                <Bell size={18} strokeWidth={2.5} />
                 {totalUnread > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                    {totalUnread}
-                  </span>
+                  <span className="absolute top-1.5 right-1.5 bg-red-500 w-2 h-2 rounded-full border-2 border-[#0F172A]" />
                 )}
               </button>
 
@@ -101,79 +121,108 @@ export default function Navbar() {
                   await loadUnread();
                   navigate("/chats");
                 }}
-                className={isActive("/chats") ? "text-white font-semibold" : "text-gray-300 hover:text-white transition"}
+                className={`p-2 relative transition-all hover:bg-white/5 rounded-xl ${isActive("/chats") ? "text-white bg-white/10" : "text-gray-400 hover:text-white"}`}
               >
-                <span className="relative">
-                  Chats
-                  {totalUnread > 0 && (
-                    <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
-                      {totalUnread}
-                    </span>
-                  )}
-                </span>
+                <MessageSquare size={18} strokeWidth={2.5} />
+                {totalUnread > 0 && (
+                  <span className="absolute top-1.5 right-1.5 bg-red-500 w-2 h-2 rounded-full border-2 border-[#0F172A]" />
+                )}
               </button>
 
-              <div className="px-3 py-1 bg-white/10 rounded-full text-white text-xs capitalize">
-                {user.role}
+              <div className="h-8 w-px bg-white/10 mx-2" />
+
+              {/* User Identity Peek */}
+              <div 
+                onClick={() => navigate("/profile")}
+                className={`flex items-center gap-3 pl-2 pr-4 py-1.5 rounded-2xl cursor-pointer transition-all border ${
+                  isActive("/profile") 
+                    ? "bg-white/10 border-white/20" 
+                    : "hover:bg-white/5 border-transparent"
+                }`}
+              >
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-primary to-blue-600 flex items-center justify-center text-white shadow-lg">
+                  <UserIcon size={16} strokeWidth={2.5} />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-[10px] font-black text-white uppercase tracking-tight">{user.first_name || 'Member'}</span>
+                  <span className="text-[8px] font-black text-gray-500 uppercase tracking-widest">{user.role}</span>
+                </div>
               </div>
 
               <button
-                onClick={() => navigate("/profile")}
-                className={isActive("/profile") ? "text-white font-semibold" : "text-gray-300 hover:text-white transition"}
-              >
-                Profile
-              </button>
-
-              <button
                 onClick={handleLogout}
-                className="text-red-300 hover:text-red-200 transition"
+                className="p-2.5 text-red-400/60 hover:text-red-400 hover:bg-red-400/10 transition-all rounded-xl ml-2"
+                title="Secure Logout"
               >
-                Logout
+                <LogOut size={18} strokeWidth={2.5} />
               </button>
             </>
           )}
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Interaction Component */}
         <button
           onClick={() => setOpen(!open)}
-          className="md:hidden text-white"
+          className="lg:hidden p-2 text-white bg-white/5 rounded-xl hover:bg-white/10 transition-all"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-          </svg>
+          {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Experience Layer */}
       {open && (
-        <div className="md:hidden bg-brand-primary px-4 py-4 space-y-3 text-sm text-white border-t border-gray-700">
-          {!user && (
-            <>
-              <button onClick={() => { navigate("/login"); setOpen(false); }} className="block w-full text-left py-2 border-b border-gray-600">
-                Log In
-              </button>
-              <button onClick={() => { navigate("/signup"); setOpen(false); }} className="block w-full text-left py-2 font-bold text-blue-200">
-                Sign Up
-              </button>
-            </>
-          )}
+        <div className="lg:hidden bg-[#0F172A]/95 backdrop-blur-2xl border-t border-white/5 px-6 py-8 space-y-6 animate-in slide-in-from-top-4 duration-300">
           {user && (
-            <>
-              <button onClick={() => { navigate("/properties"); setOpen(false); }} className="block w-full text-left py-2">Properties</button>
-              {user?.role === "client" && (
-                <button onClick={() => { navigate("/ai-advisor"); setOpen(false); }} className="block w-full text-left py-2 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-green-400"></span>
-                  Viewora AI
-                </button>
-              )}
-              <button onClick={() => { navigate("/chats"); setOpen(false); }} className="block w-full text-left py-2">Chats</button>
-              <button onClick={() => { navigate("/profile"); setOpen(false); }} className="block w-full text-left py-2">Profile</button>
-              <button onClick={handleLogout} className="block w-full text-left py-2 text-red-300">Logout</button>
-            </>
+            <div className="flex items-center gap-4 p-4 bg-white/5 rounded-[2rem] border border-white/5">
+               <div className="w-12 h-12 rounded-2xl bg-brand-primary flex items-center justify-center text-white">
+                 <UserIcon size={24} strokeWidth={2.5} />
+               </div>
+               <div>
+                  <p className="font-black text-white uppercase tracking-widest text-xs">{user.first_name}</p>
+                  <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mt-0.5">{user.role}</p>
+               </div>
+            </div>
           )}
+          
+          <div className="space-y-2">
+            {!user ? (
+              <>
+                <button onClick={() => { navigate("/login"); setOpen(false); }} className="w-full py-4 text-[10px] font-black uppercase tracking-[0.3em] text-white bg-white/5 rounded-2xl border border-white/5">Log In</button>
+                <button onClick={() => { navigate("/signup"); setOpen(false); }} className="w-full py-4 text-[10px] font-black uppercase tracking-[0.3em] text-brand-primary bg-white rounded-2xl shadow-xl">Start Journey</button>
+              </>
+            ) : (
+              <>
+                <MobileNavLink icon={Building2} label="Inventory" onClick={() => { navigate("/properties"); setOpen(false); }} active={isActive("/properties")} />
+                {user?.role === "client" && (
+                  <MobileNavLink icon={Sparkles} label="Intelligencer" onClick={() => { navigate("/ai-advisor"); setOpen(false); }} active={isActive("/ai-advisor")} />
+                )}
+                <MobileNavLink icon={MessageSquare} label="Transmissions" onClick={() => { navigate("/chats"); setOpen(false); }} active={isActive("/chats")} />
+                <MobileNavLink icon={UserIcon} label="Account Detail" onClick={() => { navigate("/profile"); setOpen(false); }} active={isActive("/profile")} />
+                <button onClick={handleLogout} className="w-full flex items-center gap-4 p-5 rounded-[2rem] text-red-400 hover:bg-red-400/10 transition-all text-[10px] font-black uppercase tracking-[0.3em] mt-8">
+                  <LogOut size={20} />
+                  Terminate Session
+                </button>
+              </>
+            )}
+          </div>
         </div>
       )}
     </nav>
+  );
+}
+
+function MobileNavLink({ icon: Icon, label, onClick, active }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full flex items-center gap-4 p-5 rounded-[2rem] transition-all border ${
+        active 
+          ? "bg-white text-[#0F172A] border-transparent shadow-xl" 
+          : "text-gray-400 hover:text-white border-white/5 hover:bg-white/5"
+      }`}
+    >
+      <Icon size={20} className={active ? "text-[#0F172A]" : "text-gray-600"} />
+      <span className="text-[10px] font-black uppercase tracking-[0.3em]">{label}</span>
+    </button>
   );
 }

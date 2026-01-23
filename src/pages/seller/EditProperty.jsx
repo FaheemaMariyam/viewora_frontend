@@ -1,687 +1,3 @@
-// import { useEffect, useState } from "react";
-// import { useParams, useNavigate } from "react-router-dom";
-// import axiosInstance from "../../utils/axiosInstance";
-// import { updateProperty } from "../../api/sellerApi";
-
-// export default function EditProperty() {
-//   const { id } = useParams();
-//   const navigate = useNavigate();
-
-//   const [form, setForm] = useState(null);
-//   const [newImages, setNewImages] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [saving, setSaving] = useState(false);
-
-//   /* ---------------- FETCH PROPERTY ---------------- */
-//   useEffect(() => {
-//     axiosInstance
-//       .get(`/api/properties/seller/property/${id}/`)
-//       .then((res) => {
-//         setForm(res.data);
-//         setLoading(false);
-//       })
-//       .catch(() => {
-//         alert("Failed to load property");
-//         navigate("/seller");
-//       });
-//   }, [id, navigate]);
-
-//   /* ---------------- HANDLERS ---------------- */
-//   const handleChange = (e) => {
-//     const { name, value, type, checked } = e.target;
-//     setForm((prev) => ({
-//       ...prev,
-//       [name]: type === "checkbox" ? checked : value,
-//     }));
-//   };
-
-//   const handleNewImages = (e) => {
-//     setNewImages(Array.from(e.target.files));
-//   };
-
-//   /* ---------------- SUBMIT ---------------- */
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setSaving(true);
-
-//     const formData = new FormData();
-
-//     const ALLOWED_FIELDS = [
-//       "title",
-//       "description",
-//       "property_type",
-//       "price",
-//       "price_negotiable",
-//       "area_size",
-//       "area_unit",
-//       "property_age_years",
-//       "construction_year",
-//       "last_renovated_year",
-//       "ownership_count",
-//       "reason_for_selling",
-//       "city",
-//       "locality",
-//       "address",
-//       "latitude",
-//       "longitude",
-//       "bedrooms",
-//       "bathrooms",
-//       "parking_available",
-//       "furnishing_status",
-//       "facing",
-//       "status",
-//       "is_active",
-//     ];
-
-//     ALLOWED_FIELDS.forEach((key) => {
-//       const value = form[key];
-//       if (value === "" || value === null || value === undefined) return;
-//       formData.append(key, value);
-//     });
-
-//     // append new images
-//     newImages.forEach((img) => {
-//       formData.append("images", img);
-//     });
-
-//     try {
-//       await updateProperty(id, formData);
-//       navigate(`/seller/properties/${id}`);
-//     } catch (err) {
-//       console.error(err.response?.data);
-//       alert("Update failed");
-//     } finally {
-//       setSaving(false);
-//     }
-//   };
-
-//   if (loading) return <p className="p-6">Loading...</p>;
-
-//   /* ---------------- UI ---------------- */
-//   return (
-//     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-12 px-4">
-//       <div className="max-w-6xl mx-auto">
-//         <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
-//           {/* HEADER */}
-//           <div className="p-6 border-b">
-//             <h1 className="text-2xl font-semibold text-slate-800">
-//               Edit Property
-//             </h1>
-//             <p className="text-sm text-slate-500 mt-1">
-//               Update property details and images
-//             </p>
-//           </div>
-
-//           <form onSubmit={handleSubmit}>
-//             {/* ---------- IMAGES ---------- */}
-//             <Section title="Property Images">
-//               {form.images?.length > 0 ? (
-//                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-//                   {form.images.map((img) => (
-//                     <div
-//                       key={img.id}
-//                       className="relative rounded-xl overflow-hidden border"
-//                     >
-//                       <img
-//                         src={img.image}
-//                         alt="property"
-//                         className="h-32 w-full object-cover"
-//                       />
-//                       <span className="absolute bottom-1 right-1 text-[10px] bg-black/60 text-white px-2 py-0.5 rounded">
-//                         Existing
-//                       </span>
-//                     </div>
-//                   ))}
-//                 </div>
-//               ) : (
-//                 <p className="text-sm text-slate-500 mb-4">
-//                   No images uploaded yet
-//                 </p>
-//               )}
-
-//               <input
-//                 type="file"
-//                 multiple
-//                 accept="image/*"
-//                 onChange={handleNewImages}
-//                 className="text-sm"
-//               />
-
-//               {newImages.length > 0 && (
-//                 <p className="text-xs text-slate-500 mt-2">
-//                   {newImages.length} new image(s) selected
-//                 </p>
-//               )}
-//             </Section>
-
-//             {/* ---------- BASIC INFO ---------- */}
-//             <Section title="Basic Information">
-//               <Grid>
-//                 <Input
-//                   name="title"
-//                   value={form.title}
-//                   onChange={handleChange}
-//                   placeholder="Title"
-//                 />
-//                 <Select
-//                   name="property_type"
-//                   value={form.property_type}
-//                   onChange={handleChange}
-//                 >
-//                   <option value="house">House</option>
-//                   <option value="flat">Flat</option>
-//                   <option value="plot">Plot</option>
-//                   <option value="commercial">Commercial</option>
-//                 </Select>
-//                 <Textarea
-//                   span
-//                   name="description"
-//                   value={form.description}
-//                   onChange={handleChange}
-//                   placeholder="Description"
-//                 />
-//               </Grid>
-//             </Section>
-
-//             {/* ---------- PRICE & AREA ---------- */}
-//             <Section title="Pricing & Area">
-//               <Grid>
-//                 <Input
-//                   type="number"
-//                   name="price"
-//                   value={form.price}
-//                   onChange={handleChange}
-//                   placeholder="Price"
-//                 />
-//                 <Checkbox
-//                   name="price_negotiable"
-//                   checked={form.price_negotiable}
-//                   onChange={handleChange}
-//                   label="Price Negotiable"
-//                 />
-//                 <Input
-//                   name="area_size"
-//                   value={form.area_size || ""}
-//                   onChange={handleChange}
-//                   placeholder="Area Size"
-//                 />
-//                 <Select
-//                   name="area_unit"
-//                   value={form.area_unit}
-//                   onChange={handleChange}
-//                 >
-//                   <option value="sqft">Sqft</option>
-//                   <option value="cent">Cent</option>
-//                 </Select>
-//               </Grid>
-//             </Section>
-
-//             {/* ---------- LOCATION ---------- */}
-//             <Section title="Location">
-//               <Grid>
-//                 <Input
-//                   name="city"
-//                   value={form.city}
-//                   onChange={handleChange}
-//                   placeholder="City"
-//                 />
-//                 <Input
-//                   name="locality"
-//                   value={form.locality}
-//                   onChange={handleChange}
-//                   placeholder="Locality"
-//                 />
-//                 <Textarea
-//                   span
-//                   name="address"
-//                   value={form.address}
-//                   onChange={handleChange}
-//                   placeholder="Address"
-//                 />
-//                 <Input
-//                   name="latitude"
-//                   value={form.latitude || ""}
-//                   onChange={handleChange}
-//                   placeholder="Latitude"
-//                 />
-//                 <Input
-//                   name="longitude"
-//                   value={form.longitude || ""}
-//                   onChange={handleChange}
-//                   placeholder="Longitude"
-//                 />
-//               </Grid>
-//             </Section>
-
-//             {/* ---------- FEATURES ---------- */}
-//             <Section title="Features & Status">
-//               <Grid>
-//                 <Input
-//                   name="bedrooms"
-//                   value={form.bedrooms || ""}
-//                   onChange={handleChange}
-//                   placeholder="Bedrooms"
-//                 />
-//                 <Input
-//                   name="bathrooms"
-//                   value={form.bathrooms || ""}
-//                   onChange={handleChange}
-//                   placeholder="Bathrooms"
-//                 />
-//                 <Checkbox
-//                   name="parking_available"
-//                   checked={form.parking_available}
-//                   onChange={handleChange}
-//                   label="Parking Available"
-//                 />
-//                 <Input
-//                   name="furnishing_status"
-//                   value={form.furnishing_status || ""}
-//                   onChange={handleChange}
-//                   placeholder="Furnishing Status"
-//                 />
-//                 <Input
-//                   name="facing"
-//                   value={form.facing || ""}
-//                   onChange={handleChange}
-//                   placeholder="Facing"
-//                 />
-//                 <Select
-//                   name="status"
-//                   value={form.status}
-//                   onChange={handleChange}
-//                 >
-//                   <option value="published">Published</option>
-//                   <option value="sold">Sold</option>
-//                   <option value="archived">Archived</option>
-//                 </Select>
-//               </Grid>
-//             </Section>
-
-//             {/* ---------- ACTION ---------- */}
-//             <div className="p-6 border-t bg-slate-50 flex justify-end">
-//               <button
-//                 disabled={saving}
-//                 className="
-//                   px-8 py-3 rounded-xl
-//                   bg-gradient-to-r from-indigo-600 to-purple-600
-//                   text-white font-semibold
-//                   hover:from-indigo-700 hover:to-purple-700
-//                   shadow-lg transition
-//                 "
-//               >
-//                 {saving ? "Updating..." : "Update Property"}
-//               </button>
-//             </div>
-//           </form>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// /* ---------- UI HELPERS ---------- */
-
-// function Section({ title, children }) {
-//   return (
-//     <div className="p-6 border-b last:border-b-0">
-//       <h2 className="text-xs font-semibold tracking-widest text-slate-500 uppercase mb-4">
-//         {title}
-//       </h2>
-//       {children}
-//     </div>
-//   );
-// }
-
-// function Grid({ children }) {
-//   return (
-//     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>
-//   );
-// }
-
-// function Input(props) {
-//   return (
-//     <input
-//       {...props}
-//       className="w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
-//     />
-//   );
-// }
-
-// function Textarea({ span, ...props }) {
-//   return (
-//     <textarea
-//       {...props}
-//       rows="3"
-//       className={`w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none ${
-//         span ? "md:col-span-2" : ""
-//       }`}
-//     />
-//   );
-// }
-
-// function Select(props) {
-//   return (
-//     <select
-//       {...props}
-//       className="w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
-//     />
-//   );
-// }
-
-// function Checkbox({ label, ...props }) {
-//   return (
-//     <label className="flex items-center gap-2 text-sm">
-//       <input type="checkbox" {...props} />
-//       {label}
-//     </label>
-//   );
-// }
-// import { useEffect, useState } from "react";
-// import { useParams, useNavigate } from "react-router-dom";
-// import axios from "axios";
-// import axiosInstance from "../../utils/axiosInstance";
-// import { updateProperty } from "../../api/sellerApi";
-// import {
-//   getVideoPresignedUrl,
-//   attachVideoToProperty,
-// } from "../../api/sellerApi";
-
-// export default function EditProperty() {
-//   const { id } = useParams();
-//   const navigate = useNavigate();
-
-//   const [form, setForm] = useState(null);
-//   const [newImages, setNewImages] = useState([]);
-//   const [videoFile, setVideoFile] = useState(null);
-
-//   const [loading, setLoading] = useState(true);
-//   const [saving, setSaving] = useState(false);
-//   const [videoUploading, setVideoUploading] = useState(false);
-
-//   /* ---------------- FETCH PROPERTY ---------------- */
-//   useEffect(() => {
-//     axiosInstance
-//       .get(`/api/properties/seller/property/${id}/`)
-//       .then((res) => {
-//         setForm(res.data);
-//         setLoading(false);
-//       })
-//       .catch(() => {
-//         alert("Failed to load property");
-//         navigate("/seller");
-//       });
-//   }, [id, navigate]);
-
-//   /* ---------------- HANDLERS ---------------- */
-//   const handleChange = (e) => {
-//     const { name, value, type, checked } = e.target;
-//     setForm((prev) => ({
-//       ...prev,
-//       [name]: type === "checkbox" ? checked : value,
-//     }));
-//   };
-
-//   const handleNewImages = (e) => {
-//     setNewImages(Array.from(e.target.files));
-//   };
-
-//   const handleVideoChange = (e) => {
-//     setVideoFile(e.target.files[0]);
-//   };
-
-//   /* ---------------- VIDEO UPLOAD ---------------- */
-//   const uploadVideo = async () => {
-//     if (!videoFile) return;
-
-//     setVideoUploading(true);
-
-//     try {
-//       // 1️⃣ Request presigned URL
-//       const presignRes = await getVideoPresignedUrl(id, {
-//         file_name: videoFile.name,
-//         content_type: videoFile.type,
-//       });
-
-//       const { upload_url, key, video_url } = presignRes.data;
-
-//       // 2️⃣ Upload directly to S3
-//       await axios.put(upload_url, videoFile, {
-//         headers: { "Content-Type": videoFile.type },
-//       });
-
-//       // 3️⃣ Attach video to property
-//       await attachVideoToProperty(id, { key, video_url });
-//     } catch (err) {
-//       console.error(err);
-//       alert("Video upload failed");
-//     } finally {
-//       setVideoUploading(false);
-//     }
-//   };
-
-//   /* ---------------- SUBMIT ---------------- */
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setSaving(true);
-
-//     const formData = new FormData();
-
-//     const ALLOWED_FIELDS = [
-//       "title",
-//       "description",
-//       "property_type",
-//       "price",
-//       "price_negotiable",
-//       "area_size",
-//       "area_unit",
-//       "property_age_years",
-//       "construction_year",
-//       "last_renovated_year",
-//       "ownership_count",
-//       "reason_for_selling",
-//       "city",
-//       "locality",
-//       "address",
-//       "latitude",
-//       "longitude",
-//       "bedrooms",
-//       "bathrooms",
-//       "parking_available",
-//       "furnishing_status",
-//       "facing",
-//       "status",
-//       "is_active",
-//     ];
-
-//     ALLOWED_FIELDS.forEach((key) => {
-//       const value = form[key];
-//       if (value === "" || value === null || value === undefined) return;
-//       formData.append(key, value);
-//     });
-
-//     // append new images
-//     newImages.forEach((img) => {
-//       formData.append("images", img);
-//     });
-
-//     try {
-//       // 1️⃣ Update property details & images
-//       await updateProperty(id, formData);
-
-//       // 2️⃣ Upload video if selected
-//       if (videoFile) {
-//         await uploadVideo();
-//       }
-
-//       navigate(`/seller/properties/${id}`);
-//     } catch (err) {
-//       console.error(err.response?.data);
-//       alert("Update failed");
-//     } finally {
-//       setSaving(false);
-//     }
-//   };
-
-//   if (loading) return <p className="p-6">Loading...</p>;
-
-//   /* ---------------- UI ---------------- */
-//   return (
-//     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-12 px-4">
-//       <div className="max-w-6xl mx-auto">
-//         <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
-//           {/* HEADER */}
-//           <div className="p-6 border-b">
-//             <h1 className="text-2xl font-semibold text-slate-800">
-//               Edit Property
-//             </h1>
-//             <p className="text-sm text-slate-500 mt-1">
-//               Update property details, images, and video
-//             </p>
-//           </div>
-
-//           <form onSubmit={handleSubmit}>
-//             {/* ---------- IMAGES ---------- */}
-//             <Section title="Property Images">
-//               {form.images?.length > 0 ? (
-//                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-//                   {form.images.map((img) => (
-//                     <img
-//                       key={img.id}
-//                       src={img.image}
-//                       alt="property"
-//                       className="h-32 w-full object-cover rounded-xl border"
-//                     />
-//                   ))}
-//                 </div>
-//               ) : (
-//                 <p className="text-sm text-slate-500 mb-4">
-//                   No images uploaded yet
-//                 </p>
-//               )}
-
-//               <input
-//                 type="file"
-//                 multiple
-//                 accept="image/*"
-//                 onChange={handleNewImages}
-//               />
-//             </Section>
-
-//             {/* ---------- VIDEO ---------- */}
-//             <Section title="Property Video">
-//               <input
-//                 type="file"
-//                 accept="video/*"
-//                 onChange={handleVideoChange}
-//               />
-
-//               {videoFile && (
-//                 <p className="text-xs text-slate-500 mt-2">
-//                   Selected: {videoFile.name}
-//                 </p>
-//               )}
-
-//               {videoUploading && (
-//                 <p className="text-xs text-indigo-600 mt-2">
-//                   Uploading video…
-//                 </p>
-//               )}
-//             </Section>
-
-//             {/* ---------- BASIC INFO ---------- */}
-//             <Section title="Basic Information">
-//               <Grid>
-//                 <Input
-//                   name="title"
-//                   value={form.title}
-//                   onChange={handleChange}
-//                   placeholder="Title"
-//                 />
-//                 <Select
-//                   name="property_type"
-//                   value={form.property_type}
-//                   onChange={handleChange}
-//                 >
-//                   <option value="house">House</option>
-//                   <option value="flat">Flat</option>
-//                   <option value="plot">Plot</option>
-//                   <option value="commercial">Commercial</option>
-//                 </Select>
-//                 <Textarea
-//                   span
-//                   name="description"
-//                   value={form.description}
-//                   onChange={handleChange}
-//                   placeholder="Description"
-//                 />
-//               </Grid>
-//             </Section>
-
-//             {/* ---------- ACTION ---------- */}
-//             <div className="p-6 border-t bg-slate-50 flex justify-end">
-//               <button
-//                 disabled={saving || videoUploading}
-//                 className="px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold shadow-lg"
-//               >
-//                 {saving || videoUploading ? "Saving..." : "Update Property"}
-//               </button>
-//             </div>
-//           </form>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// /* ---------- UI HELPERS ---------- */
-
-// function Section({ title, children }) {
-//   return (
-//     <div className="p-6 border-b last:border-b-0">
-//       <h2 className="text-xs font-semibold tracking-widest text-slate-500 uppercase mb-4">
-//         {title}
-//       </h2>
-//       {children}
-//     </div>
-//   );
-// }
-
-// function Grid({ children }) {
-//   return (
-//     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>
-//   );
-// }
-
-// function Input(props) {
-//   return (
-//     <input
-//       {...props}
-//       className="w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
-//     />
-//   );
-// }
-
-// function Textarea({ span, ...props }) {
-//   return (
-//     <textarea
-//       {...props}
-//       rows="3"
-//       className={`w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none ${
-//         span ? "md:col-span-2" : ""
-//       }`}
-//     />
-//   );
-// }
-
-// function Select(props) {
-//   return (
-//     <select
-//       {...props}
-//       className="w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
-//     />
-//   );
-// }
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -691,6 +7,16 @@ import {
   getVideoPresignedUrl,
   attachVideoToProperty,
 } from "../../api/sellerApi";
+import {
+  ChevronsRight,
+  CheckCircle2,
+  Image as ImageIcon,
+  MapPin,
+  Home,
+  FileText,
+  UploadCloud,
+  X
+} from "lucide-react";
 
 export default function EditProperty() {
   const { id } = useParams();
@@ -703,6 +29,15 @@ export default function EditProperty() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [videoUploading, setVideoUploading] = useState(false);
+  
+  // WIZARD STATE
+  const [currentStep, setCurrentStep] = useState(1);
+  const STEPS = [
+    { number: 1, title: "Basic Info", icon: Home },
+    { number: 2, title: "Location", icon: MapPin },
+    { number: 3, title: "Details", icon: FileText },
+    { number: 4, title: "Media", icon: ImageIcon },
+  ];
 
   /* ---------- FETCH PROPERTY ---------- */
   useEffect(() => {
@@ -727,324 +62,309 @@ export default function EditProperty() {
     }));
   };
 
-  const handleNewImages = (e) => {
-    setNewImages(Array.from(e.target.files));
-  };
-
-  const handleVideoChange = (e) => {
-    setVideoFile(e.target.files[0]);
-  };
-
-  /* ---------- VIDEO UPLOAD ---------- */
-  const uploadVideo = async () => {
-    if (!videoFile) return;
-
-    setVideoUploading(true);
-
-    try {
-      // 1️⃣ Get presigned URL
-      const presignRes = await getVideoPresignedUrl(id, {
-        file_name: videoFile.name,
-        content_type: videoFile.type,
-      });
-
-      const { upload_url, key, video_url } = presignRes.data;
-
-      // 2️⃣ Upload to S3
-      await axios.put(upload_url, videoFile, {
-        headers: { "Content-Type": videoFile.type },
-      });
-
-      // 3️⃣ Attach to property (IMPORTANT: send video_url)
-      await attachVideoToProperty(id, { key, video_url });
-    } catch (err) {
-      console.error(err);
-      alert("Video upload failed");
-    } finally {
-      setVideoUploading(false);
-    }
-  };
-
   /* ---------- SUBMIT ---------- */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setSaving(true);
-
     const formData = new FormData();
 
     const FIELDS = [
-      "title",
-      "description",
-      "property_type",
-      "price",
-      "price_negotiable",
-      "area_size",
-      "area_unit",
-      "property_age_years",
-      "construction_year",
-      "last_renovated_year",
-      "ownership_count",
-      "reason_for_selling",
-      "city",
-      "locality",
-      "address",
-      "latitude",
-      "longitude",
-      "bedrooms",
-      "bathrooms",
-      "parking_available",
-      "furnishing_status",
-      "facing",
-      "status",
-      "is_active",
+      "title", "description", "property_type", "price", "price_negotiable",
+      "area_size", "area_unit", "property_age_years", "construction_year",
+      "last_renovated_year", "ownership_count", "reason_for_selling",
+      "city", "locality", "address", "latitude", "longitude",
+      "bedrooms", "bathrooms", "parking_available", "furnishing_status",
+      "facing", "status", "is_active",
     ];
 
     FIELDS.forEach((key) => {
-      if (form[key] !== "" && form[key] !== null && form[key] !== undefined) {
-        formData.append(key, form[key]);
+      let value = form[key];
+      // Convert boolean true/false to "true"/"false" string for FormData if needed, 
+      // though typically Django handles standard boolean values well.
+      // Filter out null/undefined to avoid sending "null" string.
+      if (value !== null && value !== undefined) {
+          formData.append(key, value);
       }
     });
 
     newImages.forEach((img) => formData.append("images", img));
 
     try {
-      // 1️⃣ Update property fields & images
       await updateProperty(id, formData);
-
-      // 2️⃣ Upload video if selected
-      if (videoFile) {
-        await uploadVideo();
-      }
-
+      if (videoFile) await uploadVideo();
       navigate(`/seller/properties/${id}`);
     } catch (err) {
-      console.error(err);
-      alert("Update failed");
+      console.error(err.response?.data);
+      alert("Update failed! Please check valid data.");
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <p className="p-6">Loading...</p>;
+  const uploadVideo = async () => {
+      // ... same video logic ...
+      const presignRes = await getVideoPresignedUrl(id, {
+        file_name: videoFile.name,
+        content_type: videoFile.type,
+      });
+      const { upload_url, key, video_url } = presignRes.data;
+      await axios.put(upload_url, videoFile, { headers: { "Content-Type": videoFile.type } });
+      await attachVideoToProperty(id, { key, video_url });
+  }
 
-  /* ---------- UI ---------- */
+
+  if (loading) return <div className="p-10 text-center">Loading Data...</div>;
+
+  /* ---------- RENDER HELPERS ---------- */
+  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 4));
+  const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-12 px-4">
-      <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
-        <div className="p-6 border-b">
-          <h1 className="text-2xl font-semibold">Edit Property</h1>
+    <div className="min-h-screen bg-gray-50 py-10 px-4">
+      <div className="max-w-4xl mx-auto">
+        
+        {/* HEADER */}
+        <div className="mb-8 text-center">
+            <h1 className="text-3xl font-bold text-gray-800">Edit Property</h1>
+            <p className="text-gray-500 mt-1">Update listings details • Step {currentStep} of 4</p>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          {/* IMAGES */}
-          <Section title="Images">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-              {form.images?.map((img) => (
-                <img
-                  key={img.id}
-                  src={img.image}
-                  className="h-32 w-full object-cover rounded-lg"
-                  alt="property"
-                />
-              ))}
+        {/* PROGRESS BAR */}
+        <div className="flex justify-between items-center mb-8 px-10 relative">
+            <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -z-10 rounded"></div>
+            <div className="absolute top-1/2 left-0 h-1 bg-brand-primary -z-10 rounded transition-all duration-500" style={{ width: `${((currentStep - 1) / 3) * 100}%` }}></div>
+            
+            {STEPS.map((step) => {
+                const isActive = step.number <= currentStep;
+                const isCurrent = step.number === currentStep;
+                return (
+                    <div key={step.number} className="flex flex-col items-center gap-2 bg-gray-50 px-2">
+                        <div className={`
+                            w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all
+                            ${isActive ? "bg-brand-primary text-white" : "bg-gray-200 text-gray-500"}
+                            ${isCurrent ? "ring-4 ring-brand-primary/20 scale-110" : ""}
+                        `}>
+                            {isActive ? <step.icon size={18} /> : step.number}
+                        </div>
+                        <span className={`text-xs font-medium ${isActive ? "text-brand-primary" : "text-gray-400"}`}>
+                            {step.title}
+                        </span>
+                    </div>
+                )
+            })}
+        </div>
+        
+        {/* FORM CONTAINER */}
+        <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+            <div className="p-8 min-h-[400px]">
+                
+                {/* STEP 1: BASIC INFO */}
+                {currentStep === 1 && (
+                    <div className="space-y-6 animate-fadeIn">
+                        <Grid>
+                            <Input label="Property Title" name="title" value={form.title} onChange={handleChange} />
+                            <Select label="Property Type" name="property_type" value={form.property_type} onChange={handleChange}>
+                                <option value="house">House</option>
+                                <option value="flat">Flat</option>
+                                <option value="plot">Plot</option>
+                                <option value="commercial">Commercial</option>
+                            </Select>
+                        </Grid>
+                        <Textarea label="Description" name="description" value={form.description} onChange={handleChange} rows={5} />
+                        <Grid>
+                             <Select label="Status" name="status" value={form.status} onChange={handleChange}>
+                                <option value="published">Published</option>
+                                <option value="sold">Sold</option>
+                                <option value="archived">Archived</option>
+                            </Select>
+                            <div className="flex items-center h-full pt-6">
+                                <Toggle label="List as Active" name="is_active" checked={form.is_active} onChange={handleChange} />
+                            </div>
+                        </Grid>
+                    </div>
+                )}
+
+                 {/* STEP 2: LOCATION */}
+                 {currentStep === 2 && (
+                    <div className="space-y-6 animate-fadeIn">
+                         <Grid>
+                            <Input label="City" name="city" value={form.city} onChange={handleChange} />
+                            <Input label="Locality" name="locality" value={form.locality} onChange={handleChange} />
+                        </Grid>
+                        <Textarea label="Full Address" name="address" value={form.address} onChange={handleChange} />
+                        <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                            <h4 className="text-sm font-bold text-blue-800 mb-2 flex items-center gap-2">
+                                <MapPin size={16}/> Coordinates
+                            </h4>
+                            <Grid>
+                                <Input label="Latitude" name="latitude" value={form.latitude} onChange={handleChange} placeholder="e.g. 10.015" />
+                                <Input label="Longitude" name="longitude" value={form.longitude} onChange={handleChange} placeholder="e.g. 76.342" />
+                            </Grid>
+                        </div>
+                    </div>
+                )}
+
+                {/* STEP 3: DETAILS */}
+                {currentStep === 3 && (
+                    <div className="space-y-8 animate-fadeIn">
+                        {/* Price & Area */}
+                        <div className="space-y-4">
+                            <h3 className="section-title">Pricing & Dimensions</h3>
+                            <Grid>
+                                <Input type="number" label="Price (₹)" name="price" value={form.price} onChange={handleChange} />
+                                <div className="pt-8">
+                                    <Toggle label="Price Negotiable" name="price_negotiable" checked={form.price_negotiable} onChange={handleChange} />
+                                </div>
+                                <Input type="number" label="Area Size" name="area_size" value={form.area_size} onChange={handleChange} />
+                                <Select label="Unit" name="area_unit" value={form.area_unit} onChange={handleChange}>
+                                    <option value="sqft">Sq. Ft</option>
+                                    <option value="cent">Cent</option>
+                                </Select>
+                            </Grid>
+                        </div>
+
+                        {/* Features */}
+                         <div className="space-y-4">
+                            <h3 className="section-title">Features</h3>
+                            <Grid>
+                                <Input type="number" label="Bedrooms" name="bedrooms" value={form.bedrooms} onChange={handleChange} />
+                                <Input type="number" label="Bathrooms" name="bathrooms" value={form.bathrooms} onChange={handleChange} />
+                                <Input label="Facing" name="facing" value={form.facing} onChange={handleChange} placeholder="e.g. North-East" />
+                                <div className="pt-8">
+                                    <Toggle label="Parking Available" name="parking_available" checked={form.parking_available} onChange={handleChange} />
+                                </div>
+                                <Input label="Furnishing" name="furnishing_status" value={form.furnishing_status} onChange={handleChange} />
+                            </Grid>
+                        </div>
+
+                         {/* Meta Data */}
+                         <div className="space-y-4">
+                            <h3 className="section-title">Property History</h3>
+                             <Grid>
+                                <Input type="number" label="Age (Years)" name="property_age_years" value={form.property_age_years} onChange={handleChange} />
+                                <Input type="number" label="Construction Year" name="construction_year" value={form.construction_year} onChange={handleChange} />
+                                <Input type="number" label="Last Renovated" name="last_renovated_year" value={form.last_renovated_year} onChange={handleChange} />
+                                <Input type="number" label="Ownership Count" name="ownership_count" value={form.ownership_count} onChange={handleChange} />
+                                <Input label="Reason for Selling" name="reason_for_selling" value={form.reason_for_selling} onChange={handleChange} />
+                            </Grid>
+                         </div>
+                    </div>
+                )}
+
+                {/* STEP 4: MEDIA */}
+                {currentStep === 4 && (
+                    <div className="space-y-8 animate-fadeIn">
+                        
+                        {/* Existing Images */}
+                        <div>
+                             <h3 className="section-title mb-4">Current Images</h3>
+                             <div className="grid grid-cols-4 gap-4">
+                                {form.images.map(img => (
+                                    <div key={img.id} className="relative aspect-square rounded-lg overflow-hidden border">
+                                        <img src={img.image} className="w-full h-full object-cover" />
+                                    </div>
+                                ))}
+                             </div>
+                        </div>
+
+                        {/* Upload New */}
+                        <div className="p-8 border-2 border-dashed border-gray-300 rounded-2xl bg-gray-50 text-center hover:bg-gray-100 transition-colors">
+                            <input type="file" multiple accept="image/*" onChange={(e) => setNewImages([...e.target.files])} className="hidden" id="img-upload" />
+                            <label htmlFor="img-upload" className="cursor-pointer flex flex-col items-center gap-2">
+                                <UploadCloud size={40} className="text-brand-primary" />
+                                <span className="text-gray-600 font-medium">Click to upload new images</span>
+                                <span className="text-xs text-gray-400">JPG, PNG supported</span>
+                            </label>
+                            {newImages.length > 0 && <p className="mt-4 text-emerald-600 font-bold">{newImages.length} files selected</p>}
+                        </div>
+
+                         {/* Video */}
+                         <div>
+                            <h3 className="section-title mb-4">Property Video</h3>
+                             <input type="file" accept="video/*" onChange={(e) => setVideoFile(e.target.files[0])} className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"/>
+                            {videoFile && <p className="mt-2 text-sm text-gray-500">Selected: {videoFile.name}</p>}
+                         </div>
+
+                    </div>
+                )}
+
             </div>
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleNewImages}
-            />
-          </Section>
 
-          {/* VIDEO */}
-          <Section title="Property Video">
-            <input type="file" accept="video/*" onChange={handleVideoChange} />
-            {videoUploading && (
-              <p className="text-xs mt-2 text-indigo-600">
-                Uploading video…
-              </p>
-            )}
-          </Section>
+            {/* FOOTER */}
+            <div className="p-6 bg-gray-50 border-t border-gray-200 flex justify-between">
+                <button 
+                    onClick={prevStep} 
+                    disabled={currentStep === 1}
+                    className="px-6 py-3 rounded-xl text-gray-600 font-medium hover:bg-gray-200 disabled:opacity-50 transition"
+                >
+                    Back
+                </button>
 
-          {/* BASIC INFO */}
-          <Section title="Basic Info">
-            <Grid>
-              <Input name="title" value={form.title} onChange={handleChange} />
-              <Select
-                name="property_type"
-                value={form.property_type}
-                onChange={handleChange}
-              >
-                <option value="house">House</option>
-                <option value="flat">Flat</option>
-                <option value="plot">Plot</option>
-                <option value="commercial">Commercial</option>
-              </Select>
-              <Textarea
-                span
-                name="description"
-                value={form.description}
-                onChange={handleChange}
-              />
-            </Grid>
-          </Section>
+                {currentStep < 4 ? (
+                     <button 
+                        onClick={nextStep}
+                        className="px-8 py-3 rounded-xl bg-brand-primary text-white font-bold hover:bg-brand-secondary shadow-lg flex items-center gap-2"
+                     >
+                        Next <ChevronsRight size={18} />
+                     </button>
+                ) : (
+                    <button 
+                        onClick={handleSubmit} 
+                        disabled={saving}
+                        className="px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-700 text-white font-bold hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2"
+                    >
+                        {saving ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <CheckCircle2 size={18} />}
+                        Save Changes
+                    </button>
+                )}
+            </div>
+        </div>
 
-          {/* PRICE & AREA */}
-          <Section title="Pricing & Area">
-            <Grid>
-              <Input
-                type="number"
-                name="price"
-                value={form.price}
-                onChange={handleChange}
-              />
-              <Checkbox
-                name="price_negotiable"
-                checked={form.price_negotiable}
-                onChange={handleChange}
-                label="Negotiable"
-              />
-              <Input
-                name="area_size"
-                value={form.area_size || ""}
-                onChange={handleChange}
-              />
-              <Select
-                name="area_unit"
-                value={form.area_unit}
-                onChange={handleChange}
-              >
-                <option value="sqft">Sqft</option>
-                <option value="cent">Cent</option>
-              </Select>
-            </Grid>
-          </Section>
-
-          {/* LOCATION */}
-          <Section title="Location">
-            <Grid>
-              <Input name="city" value={form.city} onChange={handleChange} />
-              <Input
-                name="locality"
-                value={form.locality}
-                onChange={handleChange}
-              />
-              <Textarea
-                span
-                name="address"
-                value={form.address}
-                onChange={handleChange}
-              />
-              <Input
-                name="latitude"
-                value={form.latitude || ""}
-                onChange={handleChange}
-              />
-              <Input
-                name="longitude"
-                value={form.longitude || ""}
-                onChange={handleChange}
-              />
-            </Grid>
-          </Section>
-
-          {/* FEATURES */}
-          <Section title="Features">
-            <Grid>
-              <Input
-                name="bedrooms"
-                value={form.bedrooms || ""}
-                onChange={handleChange}
-              />
-              <Input
-                name="bathrooms"
-                value={form.bathrooms || ""}
-                onChange={handleChange}
-              />
-              <Checkbox
-                name="parking_available"
-                checked={form.parking_available}
-                onChange={handleChange}
-                label="Parking"
-              />
-              <Input
-                name="furnishing_status"
-                value={form.furnishing_status || ""}
-                onChange={handleChange}
-              />
-              <Input
-                name="facing"
-                value={form.facing || ""}
-                onChange={handleChange}
-              />
-              <Select
-                name="status"
-                value={form.status}
-                onChange={handleChange}
-              >
-                <option value="published">Published</option>
-                <option value="sold">Sold</option>
-                <option value="archived">Archived</option>
-              </Select>
-            </Grid>
-          </Section>
-
-          <div className="p-6 border-t flex justify-end">
-            <button
-              disabled={saving || videoUploading}
-              className="px-8 py-3 rounded-xl bg-indigo-600 text-white font-semibold"
-            >
-              {saving || videoUploading ? "Saving…" : "Update Property"}
-            </button>
-          </div>
-        </form>
       </div>
     </div>
   );
 }
 
-/* ---------- UI HELPERS ---------- */
+// --- UI COMPONENTS ---
 
-function Section({ title, children }) {
-  return (
-    <div className="p-6 border-b">
-      <h2 className="text-xs font-semibold uppercase text-slate-500 mb-4">
-        {title}
-      </h2>
-      {children}
-    </div>
-  );
+function Grid({ children }) { return <div className="grid grid-cols-1 md:grid-cols-2 gap-6">{children}</div> }
+
+function Input({ label, ...props }) {
+    return (
+        <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-700">{label}</label>
+            <input {...props} className="px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 outline-none transition-all w-full" />
+        </div>
+    )
 }
 
-function Grid({ children }) {
-  return <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>;
+function Textarea({ label, ...props }) {
+    return (
+        <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-700">{label}</label>
+            <textarea {...props} className="px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 outline-none transition-all w-full" />
+        </div>
+    )
 }
 
-function Input(props) {
-  return <input {...props} className="w-full border rounded px-3 py-2" />;
+function Select({ label, children, ...props }) {
+    return (
+         <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-700">{label}</label>
+            <select {...props} className="px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 outline-none transition-all w-full bg-white">
+                {children}
+            </select>
+        </div>
+    )
 }
 
-function Textarea({ span, ...props }) {
-  return (
-    <textarea
-      {...props}
-      rows="3"
-      className={`w-full border rounded px-3 py-2 ${
-        span ? "md:col-span-2" : ""
-      }`}
-    />
-  );
-}
-
-function Select(props) {
-  return <select {...props} className="w-full border rounded px-3 py-2" />;
-}
-
-function Checkbox({ label, ...props }) {
-  return (
-    <label className="flex items-center gap-2">
-      <input type="checkbox" {...props} />
-      {label}
-    </label>
-  );
+function Toggle({ label, checked, onChange, name }) {
+    return (
+        <label className="flex items-center gap-3 cursor-pointer group">
+            <div className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ${checked ? "bg-brand-primary" : "bg-gray-300"}`}>
+                <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-300 ${checked ? "translate-x-6" : "translate-x-0"}`}></div>
+            </div>
+            <span className="text-sm font-medium text-gray-700 group-hover:text-brand-primary transition-colors">{label}</span>
+            <input type="checkbox" name={name} checked={checked} onChange={onChange} className="hidden" />
+        </label>
+    )
 }

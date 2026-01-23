@@ -182,7 +182,10 @@ export default function VideoCall({ socket, onClose }) {
             });
         }
 
-        const offer = await pc.createOffer();
+        const offer = await pc.createOffer({
+            offerToReceiveAudio: true,
+            offerToReceiveVideo: true
+        });
         await pc.setLocalDescription(offer);
 
         safeSend({ type: "offer", data: offer });

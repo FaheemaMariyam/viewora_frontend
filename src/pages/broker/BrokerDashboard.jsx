@@ -11,7 +11,8 @@ import {
 
 import ChatBox from "../../components/ChatBox";
 import { startInterest } from "../../api/brokerApi";
-import { User as UserIcon } from "lucide-react";
+import { User as UserIcon, LayoutDashboard, Search, Bell, CheckCircle2, XCircle, Briefcase } from "lucide-react";
+import { DealCard } from "./DealCard";
 
 export default function BrokerDashboard() {
   const { user, loading } = useContext(AuthContext);
@@ -54,17 +55,12 @@ export default function BrokerDashboard() {
 
   /* ---------------- ACCEPT INTEREST ---------------- */
   const handleAccept = async (interestId, e) => {
-    // Prevent selecting the item when clicking accept
     e.stopPropagation();
     try {
       await acceptInterest(interestId);
-      // Remove from available list
       setAvailableInterests((prev) => prev.filter((i) => i.id !== interestId));
-      // Reload assigned interests
       const res = await getAssignedInterests();
       setAssignedInterests(res.data);
-      
-      // Optional: switch tab to clients
       setActiveTab("clients");
     } catch (err) {
       alert("Failed to accept interest");
@@ -75,13 +71,10 @@ export default function BrokerDashboard() {
   const handleSelectInterest = async (interest) => {
     setSelectedInterest(interest);
 
-    // If it's a client interaction and just assigned, start it
     if (activeTab === "clients" && interest.status === "assigned") {
       try {
         await startInterest(interest.id);
-        
         const updated = { ...interest, status: "in_progress" };
-        
         setAssignedInterests((prev) =>
           prev.map((i) => (i.id === interest.id ? updated : i))
         );
@@ -92,167 +85,156 @@ export default function BrokerDashboard() {
     }
   };
 
-  /* ---------------- STATUS BADGE ---------------- */
-  const statusColor = (status) => {
-    switch (status) {
-      case "assigned":
-        return "bg-indigo-50 text-indigo-700 border-indigo-100";
-      case "in_progress":
-        return "bg-amber-50 text-amber-700 border-amber-100";
-      case "closed":
-        return "bg-emerald-50 text-emerald-700 border-emerald-100";
-      default:
-        return "bg-gray-50 text-gray-600 border-gray-200";
-    }
-  };
-
   /* ---------------- RENDER SIDEBAR LIST ---------------- */
   const renderList = () => {
     const list = activeTab === "requests" ? availableInterests : assignedInterests;
 
-    if (fetching) return <div className="p-6 text-sm text-text-muted">Loading...</div>;
+    if (fetching) return (
+      <div className="p-8 flex flex-col items-center justify-center space-y-3 opacity-50">
+        <div className="w-6 h-6 border-2 border-brand-primary border-t-transparent rounded-full animate-spin" />
+        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Loading Assets...</span>
+      </div>
+    );
 
     if (list.length === 0) {
       return (
-        <div className="p-8 text-center text-text-muted">
-          <p className="text-sm">No {activeTab === "requests" ? "new requests" : "active clients"}.</p>
+        <div className="p-12 text-center flex flex-col items-center justify-center h-64">
+          <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 shadow-inner">
+            <span className="text-2xl opacity-20">📭</span>
+          </div>
+          <p className="text-sm font-bold text-gray-400">No {activeTab === "requests" ? "Active Inquiries" : "Client Portfolios"}</p>
+          <p className="text-[10px] text-gray-300 mt-1 max-w-[150px]">
+            {activeTab === "requests" ? "New leads will appear here automatically." : "Accept a request to start a deal."}
+          </p>
         </div>
       );
     }
 
     return (
-      <div className="divide-y divide-gray-100">
+      <div className="px-4 py-2 space-y-1">
         {list.map((interest) => (
-          <div
+          <DealCard
             key={interest.id}
+            interest={interest}
+            type={activeTab}
+            isSelected={selectedInterest?.id === interest.id}
             onClick={() => handleSelectInterest(interest)}
-            className={`
-              p-4 cursor-pointer transition-all border-l-4
-              ${selectedInterest?.id === interest.id 
-                ? "bg-blue-50/50 border-brand-accent scale-[1.02] shadow-sm z-10" 
-                : "border-transparent hover:bg-gray-50"}
-            `}
-          >
-            <div className="flex justify-between items-start mb-1">
-              <h4 className="text-sm font-semibold text-brand-primary line-clamp-1">
-                {interest.property}
-              </h4>
-              {activeTab === "clients" && (
-                <span className={`text-[10px] px-1.5 py-0.5 rounded border uppercase font-bold tracking-wider ${statusColor(interest.status)}`}>
-                  {interest.status.replace("_", " ")}
-                </span>
-              )}
-            </div>
-
-            <p className="text-xs text-text-muted mb-2">
-              Client: <span className="text-text-main font-medium">{interest.client}</span>
-            </p>
-
-            {activeTab === "requests" && (
-              <button
-                onClick={(e) => handleAccept(interest.id, e)}
-                className="
-                  mt-1 w-full py-1.5 rounded text-xs font-semibold
-                  bg-brand-primary text-white
-                  hover:bg-brand-secondary transition
-                  shadow-sm
-                "
-              >
-                Accept Request
-              </button>
-            )}
-          </div>
+            onAccept={handleAccept}
+          />
         ))}
       </div>
     );
   };
 
   return (
-    <div className="min-h-screen bg-bg-page flex flex-col md:flex-row max-w-7xl mx-auto md:py-6 md:px-6 h-[100vh]">
+    <div className="min-h-screen bg-[#F8F9FB] flex flex-col md:flex-row max-w-[1600px] mx-auto h-[100vh] overflow-hidden font-sans">
       
       {/* ---------------- SIDEBAR ---------------- */}
-      <div className="w-full md:w-80 lg:w-96 flex flex-col bg-white border-r border-gray-200 shadow-xl z-10 md:rounded-l-lg overflow-hidden">
+      <div className="w-full md:w-[400px] flex flex-col bg-white border-r border-gray-100 z-20 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
         
         {/* Sidebar Header */}
-        <div className="p-5 border-b border-gray-100 bg-white">
-          <h1 className="text-xl font-bold text-brand-primary tracking-tight">Broker Dashboard</h1>
-          <p className="text-xs text-text-muted mt-1">Manage your leads and clients</p>
-        </div>
+        <div className="p-6 pb-4 bg-white/80 backdrop-blur-xl sticky top-0 z-10">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h1 className="text-xl font-black text-[#1A1A1A] tracking-tight flex items-center gap-2">
+                <Briefcase size={20} className="text-brand-primary" />
+                Deal Flow
+              </h1>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1 ml-1">Transactions & Leads</p>
+            </div>
+            <button 
+               onClick={() => navigate("/profile")}
+               className="w-10 h-10 rounded-xl bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-600 transition-all border border-gray-100 hover:border-gray-200"
+               title="Broker Profile"
+             >
+               <UserIcon size={18} />
+             </button>
+          </div>
 
-        {/* Tabs */}
-        <div className="flex border-b border-gray-200">
-          <button
-            onClick={() => { setActiveTab("requests"); setSelectedInterest(null); }}
-            className={`
-              flex-1 py-3 text-sm font-medium transition-colors relative
-              ${activeTab === "requests" ? "text-brand-primary bg-gray-50" : "text-text-muted hover:text-text-main hover:bg-gray-50"}
-            `}
-          >
-            New Requests
-            {availableInterests.length > 0 && (
-              <span className="ml-2 bg-brand-accent text-white text-[10px] px-1.5 py-0.5 rounded-full">
-                {availableInterests.length}
-              </span>
-            )}
-            {activeTab === "requests" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-primary" />}
-          </button>
-          
-          <button
-            onClick={() => { setActiveTab("clients"); setSelectedInterest(null); }}
-            className={`
-              flex-1 py-3 text-sm font-medium transition-colors relative
-              ${activeTab === "clients" ? "text-brand-primary bg-gray-50" : "text-text-muted hover:text-text-main hover:bg-gray-50"}
-            `}
-          >
-            My Clients
-            {activeTab === "clients" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-primary" />}
-          </button>
+          {/* Toggle Tabs */}
+          <div className="flex p-1 bg-gray-100/50 rounded-xl border border-gray-100">
+            <button
+              onClick={() => { setActiveTab("requests"); setSelectedInterest(null); }}
+              className={`
+                flex-1 py-2.5 text-[11px] font-black uppercase tracking-wider rounded-lg transition-all duration-300 relative
+                ${activeTab === "requests" 
+                  ? "bg-white text-brand-primary shadow-sm hover:shadow-md" 
+                  : "text-gray-400 hover:text-gray-600 hover:bg-gray-200/50"}
+              `}
+            >
+              Inquiries
+              {availableInterests.length > 0 && (
+                <span className="ml-2 bg-rose-500 text-white text-[9px] px-1.5 py-0.5 rounded-full shadow-sm">
+                  {availableInterests.length}
+                </span>
+              )}
+            </button>
+            
+            <button
+              onClick={() => { setActiveTab("clients"); setSelectedInterest(null); }}
+              className={`
+                flex-1 py-2.5 text-[11px] font-black uppercase tracking-wider rounded-lg transition-all duration-300 relative
+                ${activeTab === "clients" 
+                  ? "bg-white text-brand-primary shadow-sm hover:shadow-md" 
+                  : "text-gray-400 hover:text-gray-600 hover:bg-gray-200/50"}
+              `}
+            >
+              Active Deals
+            </button>
+          </div>
         </div>
 
         {/* List Content */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar">
+        <div className="flex-1 overflow-y-auto custom-scrollbar bg-gray-50/30">
           {renderList()}
         </div>
         
         {/* Sidebar Footer */}
-        <div className="p-4 bg-gray-50 border-t border-gray-100">
-           <div className="flex items-center justify-between">
-             <div className="flex items-center gap-3">
-               <div className="w-8 h-8 rounded-full bg-brand-primary text-white flex items-center justify-center text-xs font-bold">
-                 {user?.username?.charAt(0).toUpperCase()}
-               </div>
-               <div className="text-xs">
-                 <p className="font-semibold text-brand-primary line-clamp-1">{user?.username}</p>
-                 <p className="text-green-600 font-medium tracking-tight">● Online</p>
-               </div>
+        <div className="p-4 bg-white border-t border-gray-100">
+           <div className="flex items-center gap-4 px-2 py-1">
+             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1A1A1A] to-[#333] text-white flex items-center justify-center text-sm font-black shadow-lg shadow-black/10">
+               {user?.username?.charAt(0).toUpperCase()}
              </div>
-             <button 
-               onClick={() => navigate("/profile")}
-               className="p-2 rounded-lg hover:bg-white hover:shadow-sm text-brand-primary transition-all group"
-               title="View Profile"
-             >
-               <UserIcon size={18} className="group-hover:scale-110 transition-transform" />
-             </button>
+             <div className="flex flex-col">
+               <p className="text-xs font-bold text-[#1A1A1A]">{user?.username || "Broker"}</p>
+               <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider flex items-center gap-1">
+                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                 Secure Connection
+               </span>
+             </div>
            </div>
         </div>
       </div>
 
       {/* ---------------- MAIN CONTENT ---------------- */}
-      <div className="hidden md:flex flex-1 flex-col bg-bg-surface md:rounded-r-lg shadow-xl overflow-hidden border border-l-0 border-gray-200 relative">
+      <div className="hidden md:flex flex-1 flex-col bg-bg-surface relative overflow-hidden">
         
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[#F8F9FB] pointer-events-none">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-primary/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
+        </div>
+
         {selectedInterest ? (
-          <>
-            {/* Header */}
-            <div className="h-16 px-6 border-b border-gray-100 flex items-center justify-between bg-white/80 backdrop-blur-sm z-10">
-              <div>
-                <h2 className="text-sm font-bold text-brand-primary">{selectedInterest.property}</h2>
-                <div className="flex items-center gap-2 text-xs text-text-muted">
-                  <span>Client: {selectedInterest.client}</span>
+          <div className="flex-1 flex flex-col relative z-10 h-full">
+            {/* Context Header */}
+            <div className="h-20 px-8 border-b border-gray-100/50 flex items-center justify-between bg-white/60 backdrop-blur-xl sticky top-0 z-20 shadow-sm">
+              <div className="flex flex-col">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-lg font-black text-[#1A1A1A] tracking-tight">{selectedInterest.property}</h2>
                   {selectedInterest.status && (
-                    <span className={`px-1.5 rounded-sm border ${statusColor(selectedInterest.status)}`}>
+                    <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest bg-gray-100 text-gray-500 border border-gray-200">
                       {selectedInterest.status.replace("_", " ")}
                     </span>
                   )}
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-xs font-medium text-gray-400">Client:</span>
+                  <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white border border-gray-100 shadow-sm">
+                    <div className="w-4 h-4 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-[8px] font-bold">
+                      {selectedInterest.client.charAt(0)}
+                    </div>
+                    <span className="text-xs font-bold text-gray-700">{selectedInterest.client}</span>
+                  </div>
                 </div>
               </div>
 
@@ -262,12 +244,10 @@ export default function BrokerDashboard() {
                      const permission = await Notification.requestPermission();
                      console.log("Permission:", permission);
                    }}
-                   title="Enable Notifications"
-                   className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition"
+                   className="w-10 h-10 rounded-xl hover:bg-white hover:shadow-md text-gray-400 hover:text-brand-primary transition-all flex items-center justify-center border border-transparent hover:border-gray-100"
+                   title="Notifications"
                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                    </svg>
+                    <Bell size={18} />
                  </button>
 
                  {selectedInterest.status === "in_progress" && (
@@ -280,59 +260,67 @@ export default function BrokerDashboard() {
                       fetchAll();
                     }}
                     className="
-                      px-3 py-1.5 rounded bg-emerald-600 text-white text-xs font-bold uppercase
-                      hover:bg-emerald-700 transition shadow-sm
+                      px-5 py-2.5 rounded-xl bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest
+                      hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center gap-2
                     "
                    >
+                     <CheckCircle2 size={14} />
                      Close Deal
                    </button>
                  )}
               </div>
             </div>
 
-            {/* Content Area */}
-            <div className="flex-1 overflow-hidden relative bg-white">
+            {/* Workspace Area */}
+            <div className="flex-1 overflow-hidden relative bg-white/40">
               {activeTab === "clients" ? (
-                <ChatBox interestId={selectedInterest.id} />
+                <div className="h-full flex flex-col">
+                  <ChatBox interestId={selectedInterest.id} />
+                </div>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center p-10 text-center">
-                  <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-brand-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
-                       <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                    </svg>
+                <div className="h-full flex flex-col items-center justify-center p-12 text-center animate-in fade-in zoom-in-95 duration-500">
+                  <div className="w-24 h-24 bg-white rounded-[2rem] flex items-center justify-center mb-8 shadow-2xl shadow-brand-primary/10 border border-gray-100 relative group">
+                    <div className="absolute inset-0 bg-brand-primary/5 rounded-[2rem] blur-xl group-hover:blur-2xl transition-all" />
+                    <Building2 size={40} className="text-brand-primary relative z-10" strokeWidth={1.5} />
                   </div>
-                  <h3 className="text-lg font-bold text-brand-primary mb-2">Request Details</h3>
-                  <p className="text-text-muted text-sm max-w-sm mb-6">
-                    {selectedInterest.client} is interested in <span className="font-semibold">{selectedInterest.property}</span>.
-                    Accept the request to start chatting and negotiating.
-                  </p>
+                  
+                  <h3 className="text-2xl font-black text-[#1A1A1A] tracking-tight mb-3">Incoming Deal Request</h3>
+                  
+                  <div className="max-w-md p-6 bg-white rounded-2xl border border-gray-100 shadow-sm mb-8">
+                     <p className="text-gray-500 text-sm leading-relaxed">
+                      <span className="font-bold text-[#1A1A1A]">{selectedInterest.client}</span> has expressed strong interest in 
+                      <span className="font-bold text-[#1A1A1A] block mt-1 text-lg">"{selectedInterest.property}"</span>
+                    </p>
+                  </div>
+
                   <button
                     onClick={(e) => handleAccept(selectedInterest.id, e)}
-                    className="px-6 py-2.5 bg-brand-primary text-white font-semibold rounded hover:bg-brand-secondary transition shadow-lg"
+                    className="
+                      px-8 py-4 bg-[#1A1A1A] text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl 
+                      hover:bg-black hover:scale-105 transition-all duration-300 shadow-2xl shadow-black/20
+                      flex items-center gap-3
+                    "
                   >
-                    Accept Request
+                    <CheckCircle2 size={18} />
+                    Accept Assignment
                   </button>
                 </div>
               )}
             </div>
-          </>
+          </div>
         ) : (
           /* Empty State */
-          <div className="flex-1 flex flex-col items-center justify-center text-text-muted bg-gray-50/50">
-            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 border border-gray-100 text-brand-primary/50">
-               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-               </svg>
-            </div>
-            <h3 className="text-lg font-bold text-brand-primary mb-2">Welcome Back, {user?.username}</h3>
-            <p className="text-sm max-w-xs text-center">
-              Select a request or an active client from the sidebar to view details and messages.
+          <div className="flex-1 flex flex-col items-center justify-center text-center relative z-10 p-8">
+             <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.05)] mb-8 border border-gray-100 animate-pulse-slow">
+               <LayoutDashboard size={48} className="text-gray-300" strokeWidth={1} />
+             </div>
+            <h1 className="text-3xl font-black text-[#1A1A1A] tracking-tighter mb-4">Command Center</h1>
+            <p className="text-gray-400 text-sm max-w-sm leading-relaxed">
+              Select an active deal from the sidebar or review new incoming requests to begin your workflow.
             </p>
           </div>
         )}
       </div>
-      
-      {/* Mobile Notice: Show only on very small screens if sidebar is hidden (handled via media queries implicitly by flex structure, but here we keep sidebar always visible on mobile for now, overlaying main content would be better for real mobile app but this is sufficient for web-view) */}
     </div>
   );
 }
