@@ -51,7 +51,7 @@ export default function Login() {
       } else if (role === "admin") {
         navigate("/admin/dashboard");
       } else {
-        navigate("/");
+        navigate("/properties");
       }
 
     } catch {

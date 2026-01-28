@@ -56,3 +56,9 @@ export const fetchPendingBrokers = () =>
 // Approve / Reject seller or broker
 export const approveRejectUser = (userId, action) =>
   axiosInstance.post(`/api/auth/admin/approve-reject/${userId}/`, { action });
+
+export const sendEmailOtp = (email) =>
+  axiosInstance.post("/api/auth/email/send-otp/", { email });
+
+export const verifyEmailOtp = (email, otp) =>
+  axiosInstance.post("/api/auth/email/verify-otp/", { email, otp });

@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signup } from "../api/authApi";
+import { signup, sendEmailOtp, verifyEmailOtp } from "../api/authApi";
 import {
   isValidPhone,
   isValidEmail,
@@ -22,8 +22,57 @@ export default function Signup() {
   const [licenseNumber, setLicenseNumber] = useState("");
   const [certificate, setCertificate] = useState(null);
 
+  // Email Verification State
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [showEmailOtpInput, setShowEmailOtpInput] = useState(false);
+  const [emailOtp, setEmailOtp] = useState("");
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+
   const [loading, setLoading] = useState(false);
+
   const [error, setError] = useState("");
+
+  const handleSendEmailOtp = async () => {
+    const email = document.getElementsByName("email")[0].value;
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email first");
+      return;
+    }
+    setError("");
+    setIsSendingOtp(true);
+    try {
+      await sendEmailOtp(email);
+      toast.success("OTP sent to your email!");
+      setShowEmailOtpInput(true);
+    } catch (err) {
+      toast.error("Failed to send OTP. Please try again.");
+    } finally {
+      setIsSendingOtp(false);
+    }
+  };
+
+  const handleVerifyEmailOtp = async () => {
+    const email = document.getElementsByName("email")[0].value;
+    if (!emailOtp) {
+      setError("Please enter the OTP");
+      return;
+    }
+    setError("");
+    setIsVerifyingOtp(true);
+    try {
+      await verifyEmailOtp(email, emailOtp);
+      toast.success("Email verified successfully!");
+      setIsEmailVerified(true);
+      setShowEmailOtpInput(false);
+    } catch (err) {
+      toast.error("Invalid OTP. Please try again.");
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+
+
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -194,9 +243,52 @@ export default function Signup() {
                     type="email"
                     placeholder="name@example.com"
                     required
-                    className="w-full bg-gray-50/50 border border-gray-100 pl-11 pr-4 py-3.5 rounded-2xl focus:bg-white focus:ring-4 focus:ring-black/5 focus:border-black outline-none transition-all text-sm font-semibold"
+                    disabled={isEmailVerified}
+                    onChange={(e) => {
+                      if (isEmailVerified) setIsEmailVerified(false);
+                    }}
+                    className={`w-full bg-gray-50/50 border border-gray-100 pl-11 pr-32 py-3.5 rounded-2xl focus:bg-white focus:ring-4 focus:ring-black/5 focus:border-black outline-none transition-all text-sm font-semibold ${isEmailVerified ? "opacity-75 cursor-not-allowed" : ""}`}
                   />
+                  
+                  {role === "broker" && (
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                      {isEmailVerified ? (
+                        <span className="px-3 py-1.5 bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-wider rounded-xl flex items-center gap-1">
+                          Verified
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={handleSendEmailOtp}
+                          disabled={isSendingOtp}
+                          className="px-3 py-1.5 bg-black text-white text-[10px] font-bold uppercase tracking-wider rounded-xl hover:bg-gray-800 disabled:opacity-50 transition-colors"
+                        >
+                          {isSendingOtp ? "Sending..." : "Verify"}
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
+
+                {/* OTP Input for Broker */}
+                {showEmailOtpInput && !isEmailVerified && (
+                   <div className="animate-in slide-in-from-top-2 duration-300 mt-2 flex gap-2">
+                     <input 
+                       value={emailOtp}
+                       onChange={(e) => setEmailOtp(e.target.value)}
+                       placeholder="Enter 6-digit OTP"
+                       className="flex-1 bg-white border border-gray-200 px-4 py-2 rounded-xl text-sm font-semibold focus:outline-none focus:border-black"
+                     />
+                     <button
+                       type="button"
+                       onClick={handleVerifyEmailOtp}
+                       disabled={isVerifyingOtp}
+                       className="px-4 py-2 bg-brand-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-brand-primary/90 disabled:opacity-50"
+                     >
+                       {isVerifyingOtp ? "Checking..." : "Confirm"}
+                     </button>
+                   </div>
+                )}
               </div>
 
               <div className="space-y-2 md:col-span-2">

@@ -116,18 +116,21 @@ export default function Navbar() {
                 )}
               </button>
 
-              <button
-                onClick={async () => {
-                  await loadUnread();
-                  navigate("/chats");
-                }}
-                className={`p-2 relative transition-all hover:bg-white/5 rounded-xl ${isActive("/chats") ? "text-white bg-white/10" : "text-gray-400 hover:text-white"}`}
-              >
-                <MessageSquare size={18} strokeWidth={2.5} />
-                {totalUnread > 0 && (
-                  <span className="absolute top-1.5 right-1.5 bg-red-500 w-2 h-2 rounded-full border-2 border-[#0F172A]" />
-                )}
-              </button>
+              {/* Chat - Only for Broker and Client */}
+              {(user?.role === "broker" || user?.role === "client") && (
+                <button
+                  onClick={async () => {
+                    await loadUnread();
+                    navigate("/chats");
+                  }}
+                  className={`p-2 relative transition-all hover:bg-white/5 rounded-xl ${isActive("/chats") ? "text-white bg-white/10" : "text-gray-400 hover:text-white"}`}
+                >
+                  <MessageSquare size={18} strokeWidth={2.5} />
+                  {totalUnread > 0 && (
+                    <span className="absolute top-1.5 right-1.5 bg-red-500 w-2 h-2 rounded-full border-2 border-[#0F172A]" />
+                  )}
+                </button>
+              )}
 
               <div className="h-8 w-px bg-white/10 mx-2" />
 
@@ -196,7 +199,10 @@ export default function Navbar() {
                 {user?.role === "client" && (
                   <MobileNavLink icon={Sparkles} label="Intelligencer" onClick={() => { navigate("/ai-advisor"); setOpen(false); }} active={isActive("/ai-advisor")} />
                 )}
-                <MobileNavLink icon={MessageSquare} label="Transmissions" onClick={() => { navigate("/chats"); setOpen(false); }} active={isActive("/chats")} />
+                {/* Chat - Only for Broker and Client */}
+                {(user?.role === "broker" || user?.role === "client") && (
+                  <MobileNavLink icon={MessageSquare} label="Transmissions" onClick={() => { navigate("/chats"); setOpen(false); }} active={isActive("/chats")} />
+                )}
                 <MobileNavLink icon={UserIcon} label="Account Detail" onClick={() => { navigate("/profile"); setOpen(false); }} active={isActive("/profile")} />
                 <button onClick={handleLogout} className="w-full flex items-center gap-4 p-5 rounded-[2rem] text-red-400 hover:bg-red-400/10 transition-all text-[10px] font-black uppercase tracking-[0.3em] mt-8">
                   <LogOut size={20} />
